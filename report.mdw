@@ -1,0 +1,50 @@
+<<echo=False, fig=False>>=
+import warnings
+warnings.filterwarnings("ignore")
+import sys
+import os
+sys.path.insert(0, '.')
+import reproduce_results
+import multiprocessing as mp
+n_cpus = mp.cpu_count()
+simple_hitting_prob_test = reproduce_results.simple_hitting_prob_test('simple_hitting_prob_test')
+capacity_estimation_test = reproduce_results.capacity_estimation_test('capacity_estimation_test')
+hitting_prob_estimation_capacity_slow = reproduce_results.hitting_prob_estimation_capacity('hitting_prob_estimation_capacity_slow')
+hitting_prob_estimation_capacity_fast = reproduce_results.hitting_prob_estimation_capacity('hitting_prob_estimation_capacity_fast')
+nontrivial_hitting_prob_test = reproduce_results.nontrivial_hitting_prob_test(
+    'nontrivial_hitting_prob_test', hitting_prob_estimation_capacity_slow['hitting_prob']
+)
+@
+
+# Sanity Checks on Flat Energy Landscape
+
+## $\varepsilon$-flatness and CHop Probabilities
+
+- Direct simulations: mean <% print('{:.4f}'.format(simple_hitting_prob_test['mean_hitting_prob'])) %>, standard deviation <% print('{:.4f}'.format(simple_hitting_prob_test['std_hitting_prob'])) %>
+- CHop probability: <% print('{:.4f}'.format(simple_hitting_prob_test['expected_prob'][0])) %>
+
+![$\varepsilon$-flatness and CHop Probabilities for Flat Energy Landscape](<% print(os.path.relpath(simple_hitting_prob_test['fig_fname'], '.')) %>)
+
+## Capacity Estimation on Flat Energy Landscape
+
+- Exact value: <% print('{:.6f}'.format(capacity_estimation_test['expected_capacity'])) %>
+- Estimate from capacity estimation algorithm: <% print('{:.6f}'.format(capacity_estimation_test['estimated_capacity'])) %>
+
+# Results on Nontrivial Energy Landscape
+
+## $\varepsilon$-flatness and CHop Probabilities
+
+- Direct simulations: mean <% print('{:.4f}'.format(nontrivial_hitting_prob_test['mean_hitting_prob'])) %>, standard deviation <% print('{:.4f}'.format(nontrivial_hitting_prob_test['std_hitting_prob'])) %>
+- CHop probability: <% print('{:.4f}'.format(hitting_prob_estimation_capacity_slow['hitting_prob'])) %>
+
+![$\varepsilon$-flatness and CHop Probabilities for Nontrivial Energy Landscape](<% print(os.path.relpath(nontrivial_hitting_prob_test['fig_fname'], '.')) %>)
+
+## Efficiency of the Capacity Estimation Algorithm
+
+- Direct simulation: <% print('{:.2f}'.format(nontrivial_hitting_prob_test['mean_time_taken'] * n_cpus)) %> seconds (<% print('{:.2f}'.format(nontrivial_hitting_prob_test['mean_time_taken'])) %> seconds on <% print(n_cpus) %> CPUs)
+- CHop speed: <% print('{:.2f}'.format(hitting_prob_estimation_capacity_slow['time_taken'])) %> seconds on a single CPU
+
+## Even faster CHop
+
+- Estimated CHop probability: <% print('{:.4f}'.format(hitting_prob_estimation_capacity_fast['hitting_prob'])) %>
+- Speed: <% print('{:.2f}'.format(hitting_prob_estimation_capacity_fast['time_taken'])) %> on a single CPU
