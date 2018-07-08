@@ -20,7 +20,7 @@ nontrivial_hitting_prob_test = reproduce_results.nontrivial_hitting_prob_test(
 
 ## $\varepsilon$-flatness and CHop Probabilities
 
-- Direct simulations: mean <% print('{:.4f}'.format(simple_hitting_prob_test['mean_hitting_prob'])) %>, standard deviation <% print('{:.4f}'.format(simple_hitting_prob_test['std_hitting_prob'])) %>
+- Direct simulations: mean <% print('{:.4f}'.format(simple_hitting_prob_test['mean_hitting_prob'])) %>, standard deviation <% print('{:.4f}'.format(simple_hitting_prob_test['std_hitting_prob'])) %>, range $[<% print('{:.4f}'.format(simple_hitting_prob_test['min'])) %>, <% print('{:.4f}'.format(simple_hitting_prob_test['max'])) %>]$, $\varepsilon = <% print('{:.4f}'.format(simple_hitting_prob_test['epsilon'])) %>$
 - CHop probability: <% print('{:.4f}'.format(simple_hitting_prob_test['expected_prob'][0])) %>
 
 ![$\varepsilon$-flatness and CHop Probabilities for Flat Energy Landscape](<% print(os.path.relpath(simple_hitting_prob_test['fig_fname'], '.')) %>)
@@ -34,7 +34,7 @@ nontrivial_hitting_prob_test = reproduce_results.nontrivial_hitting_prob_test(
 
 ## $\varepsilon$-flatness and CHop Probabilities
 
-- Direct simulations: mean <% print('{:.4f}'.format(nontrivial_hitting_prob_test['mean_hitting_prob'])) %>, standard deviation <% print('{:.4f}'.format(nontrivial_hitting_prob_test['std_hitting_prob'])) %>
+- Direct simulations: mean <% print('{:.4f}'.format(nontrivial_hitting_prob_test['mean_hitting_prob'])) %>, standard deviation <% print('{:.4f}'.format(nontrivial_hitting_prob_test['std_hitting_prob'])) %>, range $[<% print('{:.4f}'.format(nontrivial_hitting_prob_test['min'])) %>, <% print('{:.4f}'.format(nontrivial_hitting_prob_test['max'])) %>]$, $\varepsilon = <% print('{:.4f}'.format(nontrivial_hitting_prob_test['epsilon'])) %>$
 - CHop probability: <% print('{:.4f}'.format(hitting_prob_estimation_capacity_slow['hitting_prob'])) %>
 
 ![$\varepsilon$-flatness and CHop Probabilities for Nontrivial Energy Landscape](<% print(os.path.relpath(nontrivial_hitting_prob_test['fig_fname'], '.')) %>)

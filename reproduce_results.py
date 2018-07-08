@@ -26,6 +26,9 @@ def simple_hitting_prob_test(output_identifier):
 
     results['mean_hitting_prob'] = np.mean(PA_hitting_prob_list)
     results['std_hitting_prob'] = np.std(PA_hitting_prob_list)
+    results['min'] = np.min(PA_hitting_prob_list)
+    results['max'] = np.max(PA_hitting_prob_list)
+    results['epsilon'] = np.max(PA_hitting_prob_list) - np.min(PA_hitting_prob_list)
     results['fig_fname'] = fig_fname
     fig, ax = plt.subplots(1, 1)
     ax.hist(PA_hitting_prob_list, bins=7)
@@ -73,6 +76,9 @@ def nontrivial_hitting_prob_test(output_identifier, CHop_probability):
 
     results['mean_hitting_prob'] = np.mean(PA_hitting_prob_list)
     results['std_hitting_prob'] = np.std(PA_hitting_prob_list)
+    results['min'] = np.min(PA_hitting_prob_list)
+    results['max'] = np.max(PA_hitting_prob_list)
+    results['epsilon'] = np.max(PA_hitting_prob_list) - np.min(PA_hitting_prob_list)
     results['mean_time_taken'] = np.mean(results['time_taken'])
     results['std_time_taken'] = np.std(results['time_taken'])
     results['fig_fname'] = fig_fname
