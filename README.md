@@ -12,9 +12,8 @@ git clone https://github.com/StannisZhou/capacity_hopping.git
 2. Set up the virtual environment
 ```
 cd capacity_hopping
-conda create -n capacity_hopping --file conda_requirements.txt
+conda env create -f environment.yml
 source activate capacity_hopping
-pip install -r pip_requirements.txt
 python setup.py develop
 ```
 

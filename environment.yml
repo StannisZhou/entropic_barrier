@@ -1,0 +1,19 @@
+name: capacity_hopping
+channels:
+- defaults
+dependencies:
+- h5py
+- matplotlib
+- numba
+- numpy
+- pandas
+- pandoc
+- python=3.6
+- scipy
+- sympy
+- tqdm
+- cython
+- ipython
+- jupyter
+- pip:
+  - pweave
