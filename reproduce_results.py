@@ -73,6 +73,7 @@ def nontrivial_hitting_prob_test(output_identifier, CHop_probability):
     with h5py.File(results_fname, 'r') as f:
         PA_hitting_prob_list = f['hitting_prob_list'].value[:, 0]
         results['time_taken'] = f['time_taken'].value
+        results['n_cpus'] = f['n_cpus'].value
 
     results['mean_hitting_prob'] = np.mean(PA_hitting_prob_list)
     results['std_hitting_prob'] = np.std(PA_hitting_prob_list)

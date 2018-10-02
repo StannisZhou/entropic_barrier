@@ -6,7 +6,9 @@ import os
 sys.path.insert(0, '.')
 import reproduce_results
 import multiprocessing as mp
-n_cpus = mp.cpu_count()
+import scipy
+from scipy.special import gamma
+constant = 2 * scipy.pi**(5. / 2) / gamma(5. / 2)
 simple_hitting_prob_test = reproduce_results.simple_hitting_prob_test('simple_hitting_prob_test')
 capacity_estimation_test = reproduce_results.capacity_estimation_test('capacity_estimation_test')
 hitting_prob_estimation_capacity_slow = reproduce_results.hitting_prob_estimation_capacity('hitting_prob_estimation_capacity_slow')
@@ -14,6 +16,7 @@ hitting_prob_estimation_capacity_fast = reproduce_results.hitting_prob_estimatio
 nontrivial_hitting_prob_test = reproduce_results.nontrivial_hitting_prob_test(
     'nontrivial_hitting_prob_test', hitting_prob_estimation_capacity_slow['hitting_prob']
 )
+n_cpus = nontrivial_hitting_prob_test['n_cpus']
 @
 
 # Sanity Checks on Flat Energy Landscape
@@ -27,8 +30,8 @@ nontrivial_hitting_prob_test = reproduce_results.nontrivial_hitting_prob_test(
 
 ## Capacity Estimation on Flat Energy Landscape
 
-- Exact value: <% print('{:.6f}'.format(capacity_estimation_test['expected_capacity'])) %>
-- Estimate from capacity estimation algorithm: <% print('{:.6f}'.format(capacity_estimation_test['estimated_capacity'])) %>
+- Exact value: <% print('{:.6f}'.format(constant * capacity_estimation_test['expected_capacity'])) %>
+- Estimate from capacity estimation algorithm: <% print('{:.6f}'.format(constant * capacity_estimation_test['estimated_capacity'])) %>
 
 # Results on Nontrivial Energy Landscape
 

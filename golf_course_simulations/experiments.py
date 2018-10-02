@@ -334,8 +334,13 @@ class NontrivialHittingProbTest(object):
                 if 'time_taken' in f:
                     del f['time_taken']
 
+                if 'n_cpus' in f:
+                    del f['n_cpus']
+
                 f['hitting_prob_list'] = hitting_prob_list[:ii + 1]
                 f['time_taken'] = time_taken[:ii + 1]
+                f['n_cpus'] = mp.cpu_count()
+
 
     def run_one_test(self, initial_location, n_targets):
         if self.params['n_simulations'] == 1:
