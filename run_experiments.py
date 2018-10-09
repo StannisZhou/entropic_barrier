@@ -34,7 +34,7 @@ if not os.path.exists(output_folder):
 output_identifier = 'simple_hitting_prob_test'
 reset_logging(output_identifier)
 params = {
-    'target_radiuses': np.array([0.05, 0.075]),
+    'target_radiuses': np.array([0.02, 0.04]),
     'n_initial_locations': 100,
     'n_simulations': 2000,
     'centers': np.array([
@@ -54,7 +54,7 @@ output_identifier = 'capacity_estimation_test'
 reset_logging(output_identifier)
 params = {
     'energy_type': 'flat',
-    'radiuses': np.array([0.1, 0.2, 0.4]),
+    'radiuses': np.array([0.02, 0.05, 0.1]),
     'num_points': int(1e2),
     'time_step': 1e-06,
     'inner': 1,
