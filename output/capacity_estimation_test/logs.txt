@@ -1,0 +1,33 @@
+171018-023933 CapacityEstimationTest INFO: Initializing class
+171018-023933 root INFO: {'center': array([0., 0., 0., 0., 0.]),
+ 'energy_params': {},
+ 'energy_type': 'flat',
+ 'inner': 1,
+ 'n_split': 1,
+ 'num_clusters': 3,
+ 'num_points': 100,
+ 'num_trials': 1000,
+ 'outer': 1,
+ 'output_identifier': 'capacity_estimation_test',
+ 'radiuses': array([0.02, 0.05, 0.1 ]),
+ 'realized_params_fname': '/home/ubuntu/capacity_hopping/output/capacity_estimation_test/realized_params.pkl',
+ 'relative_scale': 0.1,
+ 'results_fname': '/home/ubuntu/capacity_hopping/output/capacity_estimation_test/results.hdf5',
+ 'root_folder': '/home/ubuntu/capacity_hopping',
+ 'time_step': 1e-06,
+ 'use_parallel': False}
+171018-023933 root INFO: {'center': array([0., 0., 0., 0., 0.]),
+ 'energy_params': {},
+ 'energy_type': 'flat',
+ 'inner': 1,
+ 'n_split': 1,
+ 'num_clusters': 3,
+ 'num_points': 100,
+ 'num_trials': 1000,
+ 'outer': 1,
+ 'radiuses': array([0.02, 0.05, 0.1 ]),
+ 'relative_scale': 0.1,
+ 'time_step': 1e-06,
+ 'use_parallel': False}
+171018-023933 CapacityEstimationTest INFO: Expected capacity 2.4193548387096777e-05
+171018-023937 CapacityEstimationTest INFO: Estimated capacity 2.10010238344078e-05
