@@ -119,40 +119,8 @@ params = {
 obj = NontrivialHittingProbTest(params)
 obj.run_experiments()
 
-# CHop estimate, slower but more accurate
-output_identifier = 'hitting_prob_estimation_capacity_slow'
-reset_logging(output_identifier)
-params = {
-    'naive_simulation_folder': '{}/nontrivial_hitting_prob_test'.format(output_folder),
-    'time_step': 1e-7,
-    'capacity_estimator_params': [
-        {
-            'inner': 1,
-            'outer': 1,
-            'num_points': 5000,
-            'num_clusters': 10,
-            'num_trials': 2000,
-            'use_parallel': False,
-            'n_split': 1
-        },
-        {
-            'inner': 1,
-            'outer': 2,
-            'num_points': 5000,
-            'num_clusters': 10,
-            'num_trials': 2000,
-            'use_parallel': False,
-            'n_split': 1
-        }
-    ],
-    'output_identifier': output_identifier,
-    'root_folder': ROOT_FOLDER
-}
-obj = HittingProbEstimationCapacity(params)
-obj.run_experiments()
-
-# CHop estimate, faster but less accurate
-output_identifier = 'hitting_prob_estimation_capacity_fast'
+# CHop estimate
+output_identifier = 'hitting_prob_estimation_capacity'
 reset_logging(output_identifier)
 params = {
     'naive_simulation_folder': '{}/nontrivial_hitting_prob_test'.format(output_folder),
