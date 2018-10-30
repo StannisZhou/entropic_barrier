@@ -10,7 +10,8 @@ import scipy
 from scipy.special import gamma
 constant = 2 * scipy.pi**(5. / 2) / gamma(5. / 2)
 simple_hitting_prob_test = reproduce_results.simple_hitting_prob_test('simple_hitting_prob_test')
-capacity_estimation_test = reproduce_results.capacity_estimation_test('capacity_estimation_test')
+capacity_estimation_test_A = reproduce_results.capacity_estimation_test('capacity_estimation_test_A')
+capacity_estimation_test_B = reproduce_results.capacity_estimation_test('capacity_estimation_test_B')
 hitting_prob_estimation_capacity = reproduce_results.hitting_prob_estimation_capacity('hitting_prob_estimation_capacity')
 nontrivial_hitting_prob_test = reproduce_results.nontrivial_hitting_prob_test(
     'nontrivial_hitting_prob_test', hitting_prob_estimation_capacity['hitting_prob']
@@ -27,10 +28,15 @@ n_cpus = nontrivial_hitting_prob_test['n_cpus']
 
 ![$\varepsilon$-flatness and CHop Probabilities for Flat Energy Landscape](<% print(os.path.relpath(simple_hitting_prob_test['fig_fname'], '.')) %>)
 
-## Capacity Estimation on Flat Energy Landscape
+## Capacity Estimation for target $A$ on Flat Energy Landscape
 
-- Exact value: <% print('{:.6f}'.format(constant * capacity_estimation_test['expected_capacity'])) %>
-- Estimate from capacity estimation algorithm: <% print('{:.6f}'.format(constant * capacity_estimation_test['estimated_capacity'])) %>
+- Exact value: <% print('{:.6f}'.format(constant * capacity_estimation_test_A['expected_capacity'])) %>
+- Estimate from capacity estimation algorithm: <% print('{:.6f}'.format(constant * capacity_estimation_test_A['estimated_capacity'])) %>
+
+## Capacity Estimation for target $B$ on Flat Energy Landscape
+
+- Exact value: <% print('{:.6f}'.format(constant * capacity_estimation_test_B['expected_capacity'])) %>
+- Estimate from capacity estimation algorithm: <% print('{:.6f}'.format(constant * capacity_estimation_test_B['estimated_capacity'])) %>
 
 # Results on Nontrivial Energy Landscape
 

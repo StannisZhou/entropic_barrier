@@ -1,0 +1,33 @@
+291018-220150 CapacityEstimationTest INFO: Initializing class
+291018-220150 root INFO: {'center': array([0., 0., 0., 0., 0.]),
+ 'energy_params': {},
+ 'energy_type': 'flat',
+ 'inner': 1,
+ 'n_split': 1,
+ 'num_clusters': 3,
+ 'num_points': 100,
+ 'num_trials': 1000,
+ 'outer': 1,
+ 'output_identifier': 'capacity_estimation_test_B',
+ 'radiuses': array([0.04 , 0.075, 0.15 ]),
+ 'realized_params_fname': '/Users/zhouguangyao/temp/capacity_hopping/output/capacity_estimation_test_B/realized_params.pkl',
+ 'relative_scale': 0.1,
+ 'results_fname': '/Users/zhouguangyao/temp/capacity_hopping/output/capacity_estimation_test_B/results.hdf5',
+ 'root_folder': '/Users/zhouguangyao/temp/capacity_hopping',
+ 'time_step': 1e-07,
+ 'use_parallel': False}
+291018-220150 root INFO: {'center': array([0., 0., 0., 0., 0.]),
+ 'energy_params': {},
+ 'energy_type': 'flat',
+ 'inner': 1,
+ 'n_split': 1,
+ 'num_clusters': 3,
+ 'num_points': 100,
+ 'num_trials': 1000,
+ 'outer': 1,
+ 'radiuses': array([0.04 , 0.075, 0.15 ]),
+ 'relative_scale': 0.1,
+ 'time_step': 1e-07,
+ 'use_parallel': False}
+291018-220150 CapacityEstimationTest INFO: Expected capacity 0.00019571126547870735
+291018-220317 CapacityEstimationTest INFO: Estimated capacity 0.00018341770208293748

@@ -3,7 +3,6 @@ from golf_course_simulations.experiments import SimpleHittingProbTest, CapacityE
 from golf_course_simulations.experiments import NontrivialHittingProbTest, HittingProbEstimationCapacity
 from golf_course_simulations.utils import sample_random_locations
 import os
-import shutil
 import logging
 
 
@@ -49,14 +48,37 @@ params = {
 obj = SimpleHittingProbTest(params)
 obj.run_experiments()
 
-# Capacity estimation algorithm for flat energy landscape
-output_identifier = 'capacity_estimation_test'
+# Capacity estimation algorithm for target A
+output_identifier = 'capacity_estimation_test_A'
 reset_logging(output_identifier)
 params = {
     'energy_type': 'flat',
     'radiuses': np.array([0.02, 0.05, 0.1]),
     'num_points': int(1e2),
-    'time_step': 1e-06,
+    'time_step': 1e-07,
+    'inner': 1,
+    'num_clusters': 3,
+    'relative_scale': 0.1,
+    'center': np.zeros(5),
+    'outer': 1,
+    'num_trials': int(1e3),
+    'energy_params': {},
+    'use_parallel': False,
+    'n_split': 1,
+    'output_identifier': output_identifier,
+    'root_folder': ROOT_FOLDER
+}
+obj = CapacityEstimationTest(params)
+obj.run_experiments()
+
+# Capacity estimation algorithm for target B
+output_identifier = 'capacity_estimation_test_B'
+reset_logging(output_identifier)
+params = {
+    'energy_type': 'flat',
+    'radiuses': np.array([0.04, 0.075, 0.15]),
+    'num_points': int(1e2),
+    'time_step': 1e-07,
     'inner': 1,
     'num_clusters': 3,
     'relative_scale': 0.1,
