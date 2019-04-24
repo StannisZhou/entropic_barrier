@@ -1,4 +1,4 @@
-name: capacity_hopping
+name: entropic_barrier
 channels:
 - defaults
 dependencies:

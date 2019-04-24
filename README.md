@@ -1,19 +1,19 @@
 # Introduction
 
-This repository contains the code to reproduce the experimental results in the paper "Overcoming Entropic Barriers by Capacity Hopping".
+This repository contains the code to reproduce the experimental results in the paper "Capacities and the Free Passage of Entropic Barriers".
 
 # Setting up the environment
 
 1. Clone this repository
 ```
-git clone https://github.com/StannisZhou/capacity_hopping.git
+git clone https://github.com/StannisZhou/entropic_barrier.git
 ```
 
 2. Set up the virtual environment
 ```
-cd capacity_hopping
+cd entropic_barrier
 conda env create -f environment.yml
-source activate capacity_hopping
+source activate entropic_barrier
 python setup.py develop
 ```
 
