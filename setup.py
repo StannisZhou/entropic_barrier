@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='diffusion_git_repo',
+    name='diffusion',
     author='Guangyao Zhou',
-    author_email='guangyao_zhou@brown.edu',
+    author_email='tczhouguangyao@gmail.com',
     license='MIT',
     # Package info
     packages=find_packages(),
