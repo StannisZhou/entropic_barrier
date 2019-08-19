@@ -1,3 +1,5 @@
+import pickle
+
 import numpy as np
 
 DEFAULT_THRESHOLD_MULTIPLIER = 4
@@ -80,3 +82,12 @@ def sample_random_locations(center, radiuses, n_samples):
         locations[ii] = uniform_on_sphere(center, random_radius)
 
     return locations
+
+
+def load_model_params(model_params_fname):
+    with open(model_params_fname, 'rb') as f:
+        model_params = pickle.load(f)
+
+    time_step = model_params['time_step']
+    target_param_list = model_params['target_param_list']
+    return time_step, target_param_list

@@ -16,8 +16,8 @@ def advance_flat_regions(current_location, centers, radiuses, time_step):
     origin = np.zeros_like(current_location)
     threshold = DEFAULT_THRESHOLD_MULTIPLIER * scale
     temp_step_size = np.zeros(n_targets + 1)
+    previous_location = current_location
     while True:
-        previous_location = current_location
         for jj in range(n_targets):
             distances_squared[jj] = np.sum((current_location - centers[jj]) ** 2)
 
@@ -28,12 +28,12 @@ def advance_flat_regions(current_location, centers, radiuses, time_step):
             index = temp[0][0]
             break
 
+        previous_location = current_location
         r_squared = np.sum(current_location ** 2)
         assert r_squared < boundary_radius_squared, 'Outside reflecting boundary.'
         temp_step_size[:n_targets] = np.sqrt(distances_squared) - radiuses
         temp_step_size[-1] = boundary_radius - np.sqrt(r_squared)
         maximum_step_size = np.min(temp_step_size)
-
         if maximum_step_size > threshold:
             temp_current_location = uniform_on_sphere(
                 current_location, maximum_step_size, 1

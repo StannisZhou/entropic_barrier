@@ -23,9 +23,9 @@ class ToyModel(object):
             A list of dict, each of which contains the parameters for a
             particular target
         """
+        self.time_step = time_step
         for target_param in target_param_list:
-            if 'time_step' not in target_param:
-                target_param['time_step'] = time_step
+            assert target_param['time_step'] == time_step
 
         assert _check_compatibility(target_param_list, 1)
         self.target_list = [Target(**params) for params in target_param_list]

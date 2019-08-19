@@ -1,4 +1,5 @@
 import multiprocessing as mp
+from math import *
 
 import numba
 import numpy as np
@@ -7,7 +8,7 @@ from scipy.cluster.vq import kmeans2
 from sympy.utilities.lambdify import lambdastr
 
 import golf_course.simulate.numba as nsimulate
-from golf_course.utils import DEFAULT_RELATIVE_SCALE, uniform_on_sphere
+from golf_course.utils import uniform_on_sphere
 from tqdm import tqdm
 
 
@@ -30,7 +31,6 @@ class Target(object):
         num_clusters,
         num_trials,
         time_step=1e-5,
-        relative_scale=DEFAULT_RELATIVE_SCALE,
         use_parallel=True,
         n_split=4,
     ):
@@ -47,8 +47,7 @@ class Target(object):
         standard_deviations of all those dimensions. As a result, diag(params['standard_deviations'][i, :]**2) would
         be the covariance matrix for the ith Gaussian bump. For 'random_crater', there are four parameters. 'depth',
         'height', 'locations', and 'standard_deviations'. Refer to the above comments for the meaning of these.
-        For both 'random_well' and 'random_crater', there will be an optional 'relative_scale' parameter, which helps
-        us put the two parts of the energy on equal footing.
+
         Parameters
         ----------
         center: np.array
@@ -77,8 +76,6 @@ class Target(object):
             The number of trials we are going to run for each bin in order to decide the transition probabilities
         time_step : float
             The time step we are going to use for the simulation. Default to 1e-5
-        relative_scale : float
-            The relative scale with which we are going to balance the main and the random part
         use_parallel : bool
             Whether we are going to make the code parallel or not
         n_split : int
@@ -86,17 +83,6 @@ class Target(object):
         Returns
         -------
         """
-
-        if energy_type != 'flat':
-            if energy_type == 'random_well':
-                energy_range = energy_params['depth']
-            elif energy_type == 'random_crater':
-                energy_range = energy_params['depth'] + energy_params['height']
-            else:
-                assert False, 'Wrong energy type.'
-
-            energy_params['multiplier'] = float((relative_scale * energy_range))
-
         assert len(radiuses) == 3
         assert (
             radiuses[0] < radiuses[1] and radiuses[1] < radiuses[2]
@@ -112,15 +98,12 @@ class Target(object):
         self.num_points = num_points
         self.time_step = time_step
         self.use_parallel = use_parallel
-        self.num_trials
+        self.num_trials = num_trials
         self.n_split = n_split
 
     def generate_force_field_function(self):
         if self.energy_type == 'flat':
-
-            def get_force_field(x):
-                list(np.zeros_like(x))
-
+            get_force_field = lambda x: list(np.zeros_like(x))
         else:
             expr_generation_func_dict = {
                 'random_well': generate_random_well_sympy_expr,

@@ -102,8 +102,8 @@ def get_nontrivial_hitprob(toy_model, n_initial_locations, n_simulations):
     centers = np.zeros((n_targets, n_dim))
     outer_radiuses = np.zeros(n_targets)
     for ii in range(n_targets):
-        centers[ii] = toy_model.target_list[ii]['center']
-        outer_radiuses[ii] = toy_model.target_list[ii]['radiuses'][2]
+        centers[ii] = toy_model.target_list[ii].center
+        outer_radiuses[ii] = toy_model.target_list[ii].radiuses[2]
 
     for ii in tqdm(range(n_initial_locations)):
         initial_location_list[ii] = sample_uniform_initial_location(
@@ -145,3 +145,5 @@ def get_nontrivial_hitprob(toy_model, n_initial_locations, n_simulations):
         )
         hitting_prob_list[ii] = hitting_prob
         time_taken[ii] = end_time - start_time
+
+    return initial_location_list, hitting_prob_list, time_taken
