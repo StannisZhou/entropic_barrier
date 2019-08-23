@@ -42,25 +42,15 @@ def advance_flat_regions(current_location, centers, radiuses, time_step):
         else:
             random_component = scale * np.random.randn(n_dim)
             current_location = previous_location + random_component
-            r_squared = np.sum(current_location ** 2)
-            if r_squared > boundary_radius_squared:
-                current_location = _reflecting_boundary(
-                    origin, boundary_radius, previous_location, current_location
-                )
-
-            if np.sum(current_location ** 2) > boundary_radius_squared:
-                while True:
-                    random_component = scale * np.random.randn(n_dim)
-                    current_location = previous_location + random_component
-                    if np.sum(current_location ** 2) <= boundary_radius_squared:
-                        break
-
-                    current_location = _reflecting_boundary(
-                        origin, boundary_radius, previous_location, current_location
-                    )
-
-                    if np.sum(current_location ** 2) <= boundary_radius_squared:
-                        break
+            current_location = simulate_reflecting_boundary(
+                origin,
+                boundary_radius,
+                previous_location,
+                current_location,
+                scale,
+                time_step,
+                np.zeros_like(current_location),
+            )
 
     return previous_location, current_location, index
 
@@ -91,6 +81,8 @@ def _interpolate(point1, point2, center, target_radius):
     point_on_sphere : np array
         point_on_sphere is of shape (n,), where n is the dimension of the system.
         We should have norm(point_on_sphere - center) == target_radius
+    lbda : float
+        The real number so that point_on_sphere = point1 + lbda * (point2 - point1)
 
     """
     a = np.sum((point2 - point1) ** 2)
@@ -133,6 +125,35 @@ def _reflecting_boundary(center, radius, previous_location, current_location):
     return reflected_location
 
 
+@numba.jit(nopython=True, nogil=True, cache=True)
+def simulate_reflecting_boundary(
+    center, radius, previous_location, current_location, scale, time_step, force_field
+):
+    n_dim = center.size
+    r_squared_reflecting = np.sum(current_location ** 2)
+    if r_squared_reflecting > radius:
+        current_location = _reflecting_boundary(
+            center, radius, previous_location, current_location
+        )
+
+    if np.sum(current_location ** 2) > radius:
+        while True:
+            random_component = scale * np.random.randn(n_dim)
+            current_location = (
+                previous_location + force_field * time_step + random_component
+            )
+            if np.sum(current_location ** 2) <= radius:
+                break
+
+            current_location = _reflecting_boundary(
+                center, radius, previous_location, current_location
+            )
+            if np.sum(current_location ** 2) <= radius:
+                break
+
+    return current_location
+
+
 @numba.jit(nopython=True, cache=True)
 def uniform_on_sphere(center, radius, num_samples=1):
     """uniform_on_sphere
@@ -168,7 +189,7 @@ def uniform_on_sphere(center, radius, num_samples=1):
 
 
 def advance_within_concentric_spheres(
-    current_location, target, boundary_radiuses, time_step
+    current_location, target, boundary_radiuses, time_step, reflecting_boundary_radius
 ):
     center = target.center
     radiuses = target.radiuses
@@ -185,7 +206,12 @@ def advance_within_concentric_spheres(
         target.advance_within_concentric_spheres_numba
     )
     previous_location, current_location, target_flag = advance_within_concentric_spheres_numba(
-        current_location, center, r1, boundary_radiuses, time_step
+        current_location,
+        center,
+        r1,
+        boundary_radiuses,
+        time_step,
+        reflecting_boundary_radius,
     )
 
     return previous_location, current_location, target_flag

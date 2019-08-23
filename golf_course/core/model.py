@@ -47,7 +47,7 @@ class ToyModel(object):
             target = self.target_list[index]
             boundary_radiuses = np.array([target.radiuses[0], target.radiuses[1]])
             previous_location, current_location, target_flag = nsimulate.advance_within_concentric_spheres(
-                current_location, target, boundary_radiuses, self.time_step
+                current_location, target, boundary_radiuses, self.time_step, 1
             )
             if target_flag:
                 break

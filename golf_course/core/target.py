@@ -127,8 +127,14 @@ class Target(object):
 
         @numba.jit(nopython=True, cache=True)
         def advance_within_concentric_spheres_numba(
-            current_location, center, r1, boundary_radiuses, time_step
+            current_location,
+            center,
+            r1,
+            boundary_radiuses,
+            time_step,
+            reflecting_boundary_radius,
         ):
+            origin = np.zeros_like(current_location)
             n_dim = center.size
             inner_boundary_squared = boundary_radiuses[0] ** 2
             outer_boundary_squared = boundary_radiuses[1] ** 2
@@ -152,9 +158,17 @@ class Target(object):
 
                 previous_location = current_location
                 random_component = scale * np.random.randn(n_dim)
-
                 current_location = (
                     previous_location + force_field * time_step + random_component
+                )
+                current_location = nsimulate.simulate_reflecting_boundary(
+                    origin,
+                    reflecting_boundary_radius,
+                    previous_location,
+                    current_location,
+                    scale,
+                    time_step,
+                    force_field,
                 )
 
             return previous_location, current_location, target_flag
@@ -300,7 +314,7 @@ class Target(object):
                 ii = 0
                 for initial_location in initial_locations:
                     previous_location, current_location, target_flag = nsimulate.advance_within_concentric_spheres(
-                        initial_location, self, boundary_radiuses, time_step
+                        initial_location, self, boundary_radiuses, time_step, 1
                     )
                     if target_flag:
                         indicator = 1
@@ -477,7 +491,7 @@ class Target(object):
                 for index in indices:
                     initial_location = initial_locations[index]
                     previous_location, current_location, target_flag = nsimulate.advance_within_concentric_spheres(
-                        initial_location, self, boundary_radiuses, time_step
+                        initial_location, self, boundary_radiuses, time_step, 1
                     )
                     if target_flag:
                         indicator = 1
@@ -520,7 +534,7 @@ class Target(object):
         else:
             for initial_location in tqdm(initial_locations):
                 previous_location, current_location, target_flag = nsimulate.advance_within_concentric_spheres(
-                    initial_location, self, boundary_radiuses, time_step
+                    initial_location, self, boundary_radiuses, time_step, 1
                 )
                 if target_flag:
                     indicator = 1
