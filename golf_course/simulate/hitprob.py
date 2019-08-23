@@ -113,8 +113,8 @@ def get_nontrivial_hitprob(toy_model, n_initial_locations, n_simulations):
     n_targets = len(toy_model.target_list)
     hitting_prob_list = np.zeros((n_initial_locations, n_targets))
     time_taken = np.zeros(n_initial_locations)
-    for ii in range(n_initial_locations):
-        initial_location = initial_location_list[ii]
+    for run_idx in range(n_initial_locations):
+        initial_location = initial_location_list[run_idx]
         print('Working on initial location: {}'.format(initial_location))
         start_time = timeit.default_timer()
         if n_simulations == 1:
@@ -134,16 +134,16 @@ def get_nontrivial_hitprob(toy_model, n_initial_locations, n_simulations):
             indices = np.array(indices)
 
         hitting_prob = np.zeros(n_targets)
-        for ii in range(n_targets):
-            hitting_prob[ii] = np.sum(indices == ii) / n_simulations
+        for target_idx in range(n_targets):
+            hitting_prob[target_idx] = np.sum(indices == target_idx) / n_simulations
 
         end_time = timeit.default_timer()
         print(
             'Run {} finished. Hitting probability {}, time taken {}'.format(
-                ii, hitting_prob, end_time - start_time
+                run_idx, hitting_prob, end_time - start_time
             )
         )
-        hitting_prob_list[ii] = hitting_prob
-        time_taken[ii] = end_time - start_time
+        hitting_prob_list[run_idx] = hitting_prob
+        time_taken[run_idx] = end_time - start_time
 
     return initial_location_list, hitting_prob_list, time_taken

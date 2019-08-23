@@ -16,8 +16,9 @@ ex.observers.append(FileStorageObserver.create(log_folder))
 @ex.config
 def config():
     simulation_log_folder = os.path.expanduser(
-        '~/logs/diffusion/simulation_based_hitprob/1'
+        '~/logs/diffusion/simulation_based_hitprob/2'
     )
+    time_step = 1e-6
     capacity_estimation_params = [
         {
             "inner": 1,
@@ -41,12 +42,12 @@ def config():
 
 
 @ex.main
-def run(simulation_log_folder, capacity_estimation_params):
+def run(simulation_log_folder, time_step, capacity_estimation_params):
     temp_folder = tempfile.TemporaryDirectory()
     folder_name = temp_folder.name
     # Construct model
     model_params_fname = os.path.join(simulation_log_folder, 'model_params.pkl')
-    time_step, target_param_list = load_model_params(model_params_fname)
+    _, target_param_list = load_model_params(model_params_fname)
     assert len(capacity_estimation_params) == len(target_param_list)
     for ii in range(len(target_param_list)):
         target_param_list[ii].update(capacity_estimation_params[ii])
@@ -65,6 +66,7 @@ def run(simulation_log_folder, capacity_estimation_params):
     with open(results_fname, 'wb') as f:
         pickle.dump(results, f)
 
+    ex.add_artifact(results_fname)
     temp_folder.cleanup()
 
 

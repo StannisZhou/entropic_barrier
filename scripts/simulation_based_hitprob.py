@@ -77,8 +77,8 @@ def generate_model_params(n_bumps=10, relative_scale=DEFAULT_RELATIVE_SCALE):
 
 @ex.config
 def config():
-    n_initial_locations = 2
-    n_simulations = 20
+    n_initial_locations = 100
+    n_simulations = 1
     model_params_fname = None
     if model_params_fname is None:
         time_step, target_param_list = generate_model_params()
