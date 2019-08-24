@@ -70,7 +70,7 @@ def _check_compatibility(target_param_list, boundary_radius):
     for target_param in target_param_list:
         center = target_param['center']
         radius = target_param['radiuses'][2]
-        if np.linalg.norm(center) + radius > boundary_radius:
+        if np.linalg.norm(center) - radius > boundary_radius:
             return False
 
     for ii in range(n_spheres - 1):
