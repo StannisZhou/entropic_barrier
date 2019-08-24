@@ -6,7 +6,7 @@ DEFAULT_THRESHOLD_MULTIPLIER = 4
 DEFAULT_RELATIVE_SCALE = 0.1
 
 
-def uniform_on_sphere(center, radius, num_samples=1):
+def uniform_on_sphere(center, radius, num_samples=1, reflecting_boundary_radius=np.inf):
     """uniform_on_sphere
     Uniform distribution on a sphere
 
@@ -19,23 +19,33 @@ def uniform_on_sphere(center, radius, num_samples=1):
         radius is the radius of the sphere
     num_samples : int
         num_samples is the number of samples we are going to get
+    reflecting_boundary_radius : float
+        The radius of the reflecting boundary. Gives us a further constraint that all
+        the samples need to be within the reflecting boundary
 
     Returns
     -------
 
-    samples : np array
+    valid_samples : np array
         samples is an np array of shape (num_samples, center.size).
         Each row is a sample
 
     """
     n = center.size
-    samples = np.random.randn(num_samples, n)
-    sample_norms = np.zeros((num_samples, 1))
-    for ii in range(num_samples):
-        sample_norms[ii, 0] = np.sqrt(np.sum(samples[ii, :] ** 2))
-    samples = radius * samples / sample_norms
-    samples = samples + center.reshape((1, n))
-    return samples
+    n_valid = 0
+    valid_samples = []
+    while n_valid < num_samples:
+        samples = np.random.randn(num_samples, n)
+        sample_norms = np.linalg.norm(samples, axis=1, keepdims=True)
+        samples = radius * samples / sample_norms
+        samples = samples + center.reshape((1, n))
+        samples = samples[np.linalg.norm(samples, axis=1) < reflecting_boundary_radius]
+        valid_samples.append(samples)
+        n_valid += len(samples)
+
+    valid_samples = np.concatenate(valid_samples)
+    assert np.all(np.linalg.norm(valid_samples, axis=1) < reflecting_boundary_radius)
+    return valid_samples[:num_samples]
 
 
 def sample_uniform_initial_location(centers, radiuses, boundary_radius):

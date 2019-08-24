@@ -219,7 +219,9 @@ class Target(object):
         num_points = self.num_points
         center = self.center
         radiuses = self.radiuses
-        initial_locations = uniform_on_sphere(center, radiuses[1], num_points)
+        initial_locations = uniform_on_sphere(
+            center, radiuses[1], num_samples=num_points, reflecting_boundary_radius=1
+        )
         inner = self.inner
         outer = self.outer
         num_surfaces = inner + outer + 3
