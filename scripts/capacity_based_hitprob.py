@@ -47,6 +47,7 @@ def run(simulation_log_folder, time_step, capacity_estimation_params):
     folder_name = temp_folder.name
     # Construct model
     model_params_fname = os.path.join(simulation_log_folder, 'model_params.pkl')
+    ex.add_artifact(model_params_fname)
     _, target_param_list = load_model_params(model_params_fname)
     assert len(capacity_estimation_params) == len(target_param_list)
     for ii in range(len(target_param_list)):
@@ -62,6 +63,7 @@ def run(simulation_log_folder, time_step, capacity_estimation_params):
     end = timeit.default_timer()
     time_taken = end - start
     results = {'hitting_prob': hitting_prob, 'time_taken': time_taken}
+    print(results)
     results_fname = os.path.join(folder_name, 'capacity_results.pkl')
     with open(results_fname, 'wb') as f:
         pickle.dump(results, f)

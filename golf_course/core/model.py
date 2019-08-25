@@ -25,13 +25,10 @@ class ToyModel(object):
         """
         self.time_step = time_step
         for target_param in target_param_list:
-            assert target_param['time_step'] == time_step
+            target_param['time_step'] = time_step
 
         assert _check_compatibility(target_param_list, 1)
         self.target_list = [Target(**params) for params in target_param_list]
-        print('Generating force field function')
-        for target in tqdm(self.target_list):
-            target.generate_force_field_function()
 
     def do_naive_simulation(self, current_location):
         radiuses = np.array([target.radiuses[1] for target in self.target_list])

@@ -100,6 +100,7 @@ class Target(object):
         self.use_parallel = use_parallel
         self.num_trials = num_trials
         self.n_split = n_split
+        self.generate_force_field_function()
 
     def generate_force_field_function(self):
         if self.energy_type == 'flat':
