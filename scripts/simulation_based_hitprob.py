@@ -6,7 +6,7 @@ import numpy as np
 
 import sacred
 from golf_course.core.model import ToyModel
-from golf_course.simulate.hitprob import get_nontrivial_hitprob
+from golf_course.estimate.hitprob import get_nontrivial_hitprob
 from golf_course.utils import (DEFAULT_RELATIVE_SCALE, load_model_params,
                                sample_random_locations)
 from sacred.observers import FileStorageObserver

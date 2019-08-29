@@ -1,6 +1,6 @@
 import numpy as np
 
-import golf_course.simulate.numba as nsimulate
+import golf_course.estimate.numba as nestimate
 from golf_course.core.target import Target
 from tqdm import tqdm
 
@@ -38,12 +38,12 @@ class ToyModel(object):
         )
         assert all(distances > radiuses)
         while True:
-            previous_location, current_location, index = nsimulate.advance_flat_regions(
+            previous_location, current_location, index = nestimate.advance_flat_regions(
                 current_location, centers, radiuses, self.time_step
             )
             target = self.target_list[index]
             boundary_radiuses = np.array([target.radiuses[0], target.radiuses[1]])
-            previous_location, current_location, target_flag = nsimulate.advance_within_concentric_spheres(
+            previous_location, current_location, target_flag = nestimate.advance_within_concentric_spheres(
                 current_location, target, boundary_radiuses, self.time_step, 1
             )
             if target_flag:

@@ -4,7 +4,7 @@ import timeit
 
 import numpy as np
 
-import golf_course.simulate.numba as nsimulate
+import golf_course.estimate.numba as nestimate
 from golf_course.utils import sample_uniform_initial_location
 from tqdm import tqdm
 
@@ -14,7 +14,7 @@ def get_simple_hitprob_one_location(
 ):
     indices = []
     worker = functools.partial(
-        nsimulate.advance_flat_regions,
+        nestimate.advance_flat_regions,
         centers=centers,
         radiuses=target_radiuses,
         time_step=time_step,
