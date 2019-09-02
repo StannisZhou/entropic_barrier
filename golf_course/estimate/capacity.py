@@ -2,6 +2,8 @@ import multiprocessing as mp
 
 import numpy as np
 from scipy.cluster.vq import kmeans2
+from scipy.optimize import linear_sum_assignment
+from scipy.spatial.distance import cdist
 
 import golf_course.estimate.numba as nestimate
 from golf_course.utils import uniform_on_sphere
@@ -18,6 +20,7 @@ def estimate_capacity(
     time_step=1e-5,
     use_parallel=True,
     n_split=4,
+    n_surfaces_gradients_estimation=15,
 ):
     """
     Parameters
@@ -41,8 +44,9 @@ def estimate_capacity(
         The number of splits we are going to use for making things parallel. Default to 4
 
     """
-    forward_probabilities, backward_probabilities, cluster_labels = _get_data_driven_binning_transition_probabilities(
+    hitting_prob, cluster_centers, cluster_labels = estimate_hitting_prob(
         target,
+        target.radiuses,
         inner,
         outer,
         num_points,
@@ -52,29 +56,49 @@ def estimate_capacity(
         use_parallel,
         n_split,
     )
-    print('Transition probabilities calculation done.')
-    probability = _get_data_driven_binning_hitting_probability(
-        forward_probabilities, backward_probabilities, inner, outer, num_clusters
-    )
     middle_index = outer + 1
     cluster_labels = cluster_labels[middle_index]
+    cluster_centers = cluster_centers[middle_index]
     n_points_in_clusters = np.array(
         [np.sum(cluster_labels == ii) for ii in range(num_clusters)]
     )
+    delta = (target.radiuses[2] - target.radiuses[1]) / (
+        n_surfaces_gradients_estimation + 2
+    )
+    radiuses_gradients_estimation = np.array(
+        [target.radiuses[1], target.radiuses[1] + delta, target.radiuses[2]]
+    )
+    hitting_prob_gradients, cluster_centers_gradients, cluster_labels_gradients = estimate_hitting_prob(
+        target,
+        radiuses_gradients_estimation,
+        0,
+        n_surfaces_gradients_estimation,
+        num_points,
+        num_clusters,
+        num_trials,
+        time_step,
+        use_parallel,
+        n_split,
+    )
+    cluster_centers_gradients = cluster_centers_gradients[
+        n_surfaces_gradients_estimation + 1
+    ]
+    _, ind = linear_sum_assignment(cdist(cluster_centers, cluster_centers_gradients))
+    hitting_prob_gradients = hitting_prob_gradients[ind]
+    gradients = np.abs(hitting_prob_gradients - 1) / delta
     n_dim = target.center.size
     dA = target.radiuses[1]
-    rAtilde = target.radiuses[2]
     capacity = (
-        (n_dim - 2)
-        / (dA ** (2 - n_dim) - rAtilde ** (2 - n_dim))
-        * np.sum(n_points_in_clusters * probability)
+        dA ** (n_dim - 1)
+        * np.sum(n_points_in_clusters * hitting_prob * gradients)
         / num_points
     )
     return capacity
 
 
-def _get_data_driven_binning_transition_probabilities(
+def estimate_hitting_prob(
     target,
+    radiuses,
     inner,
     outer,
     num_points,
@@ -84,13 +108,51 @@ def _get_data_driven_binning_transition_probabilities(
     use_parallel,
     n_split,
 ):
+    cluster_centers, cluster_labels, propagated_points, statistics_from_propagation = _propagate_and_cluster(
+        target, radiuses, inner, outer, num_points, num_clusters, time_step
+    )
+    forward_probabilities, backward_probabilities, cluster_labels = _get_data_driven_binning_transition_probabilities(
+        target,
+        radiuses,
+        inner,
+        outer,
+        num_clusters,
+        num_trials,
+        time_step,
+        use_parallel,
+        n_split,
+        cluster_centers,
+        cluster_labels,
+        propagated_points,
+        statistics_from_propagation,
+    )
+    print('Transition probabilities calculation done.')
+    hitting_prob = _get_data_driven_binning_hitting_probability(
+        forward_probabilities, backward_probabilities, inner, outer, num_clusters
+    )
+    return hitting_prob, cluster_centers, cluster_labels
+
+
+def _get_data_driven_binning_transition_probabilities(
+    target,
+    radiuses,
+    inner,
+    outer,
+    num_clusters,
+    num_trials,
+    time_step,
+    use_parallel,
+    n_split,
+    cluster_centers,
+    cluster_labels,
+    propagated_points,
+    statistics_from_propagation,
+):
     forward_probabilities = []
     backward_probabilities = []
-    cluster_centers, cluster_labels, propagated_points, statistics_from_propagation = _propagate_and_cluster(
-        target, inner, outer, num_points, num_clusters, time_step
-    )
     forward_probabilities, backward_probabilities = _additional_simulations_for_transition_probabilities(
         target,
+        radiuses,
         cluster_centers,
         cluster_labels,
         propagated_points,
@@ -106,15 +168,16 @@ def _get_data_driven_binning_transition_probabilities(
     return forward_probabilities, backward_probabilities, cluster_labels
 
 
-def _propagate_and_cluster(target, inner, outer, num_points, num_clusters, time_step):
+def _propagate_and_cluster(
+    target, radiuses, inner, outer, num_points, num_clusters, time_step
+):
     center = target.center
-    radiuses = target.radiuses
     initial_locations = uniform_on_sphere(
         center, radiuses[1], num_samples=num_points, reflecting_boundary_radius=1
     )
     num_surfaces = inner + outer + 3
     middle_index = outer + 1
-    surfaces = _get_surfaces(target, inner, outer)
+    surfaces = _get_surfaces(radiuses, inner, outer)
     assert len(surfaces) == num_surfaces, 'The generated surfaces are not right.'
     # Propagate the points and gather information
     propagated_points = [[] for _ in range(num_surfaces)]
@@ -186,8 +249,7 @@ def _propagate_and_cluster(target, inner, outer, num_points, num_clusters, time_
     )
 
 
-def _get_surfaces(target, inner, outer):
-    radiuses = target.radiuses
+def _get_surfaces(radiuses, inner, outer):
     inner_surfaces = np.linspace(radiuses[1], radiuses[0], inner + 2)
     outer_surfaces = np.linspace(radiuses[2], radiuses[1], outer + 2)
     surfaces = np.concatenate((outer_surfaces, inner_surfaces[1:]))
@@ -319,6 +381,7 @@ def _process_propagated_info(
 
 def _additional_simulations_for_transition_probabilities(
     target,
+    radiuses,
     cluster_centers,
     cluster_labels,
     propagated_points,
@@ -331,7 +394,7 @@ def _additional_simulations_for_transition_probabilities(
     use_parallel,
     n_split,
 ):
-    surfaces = _get_surfaces(target, inner, outer)
+    surfaces = _get_surfaces(radiuses, inner, outer)
     num_surfaces = len(surfaces)
     if use_parallel:
         manager = mp.Manager()
@@ -347,6 +410,7 @@ def _additional_simulations_for_transition_probabilities(
             print('Doing simulations for surface {}, cluster {}.'.format(ii, jj))
             _do_additional_simulations(
                 target,
+                radiuses,
                 ii,
                 jj,
                 cluster_centers,
@@ -376,6 +440,7 @@ def _additional_simulations_for_transition_probabilities(
 
 def _do_additional_simulations(
     target,
+    radiuses,
     surface_index,
     cluster_index,
     cluster_centers,
@@ -389,7 +454,7 @@ def _do_additional_simulations(
     use_parallel,
     n_split,
 ):
-    surfaces = _get_surfaces(target, inner, outer)
+    surfaces = _get_surfaces(radiuses, inner, outer)
     cluster_points_indices = np.flatnonzero(
         cluster_labels[surface_index] == cluster_index
     )
