@@ -21,6 +21,7 @@ def estimate_capacity(
     use_parallel=True,
     n_split=4,
     n_surfaces_gradients_estimation=15,
+    analytical_gradients=False,
 ):
     """
     Parameters
@@ -42,6 +43,10 @@ def estimate_capacity(
         Whether we are going to make the code parallel or not
     n_split : int
         The number of splits we are going to use for making things parallel. Default to 4
+    n_surfaces_gradients_estimation : int
+        The number of surfaces we are going to use for numerically estimating the gradients
+    analytical_gradients : bool
+        Whether we want to use the gradients estimated analytically
 
     """
     hitting_prob, cluster_centers, cluster_labels = estimate_hitting_prob(
@@ -62,37 +67,50 @@ def estimate_capacity(
     n_points_in_clusters = np.array(
         [np.sum(cluster_labels == ii) for ii in range(num_clusters)]
     )
-    delta = (target.radiuses[2] - target.radiuses[1]) / (
-        n_surfaces_gradients_estimation + 2
-    )
-    radiuses_gradients_estimation = np.array(
-        [target.radiuses[1], target.radiuses[1] + delta, target.radiuses[2]]
-    )
-    hitting_prob_gradients, cluster_centers_gradients, cluster_labels_gradients = estimate_hitting_prob(
-        target,
-        radiuses_gradients_estimation,
-        0,
-        n_surfaces_gradients_estimation,
-        num_points,
-        num_clusters,
-        num_trials,
-        time_step,
-        use_parallel,
-        n_split,
-    )
-    cluster_centers_gradients = cluster_centers_gradients[
-        n_surfaces_gradients_estimation + 1
-    ]
-    _, ind = linear_sum_assignment(cdist(cluster_centers, cluster_centers_gradients))
-    hitting_prob_gradients = hitting_prob_gradients[ind]
-    gradients = np.abs(hitting_prob_gradients - 1) / delta
     n_dim = target.center.size
     dA = target.radiuses[1]
-    capacity = (
-        dA ** (n_dim - 1)
-        * np.sum(n_points_in_clusters * hitting_prob * gradients)
-        / num_points
-    )
+    if analytical_gradients:
+        rAtilde = target.radiuses[2]
+        capacity = (
+            (n_dim - 2)
+            / (dA ** (2 - n_dim) - rAtilde ** (2 - n_dim))
+            * np.sum(n_points_in_clusters * hitting_prob)
+            / num_points
+        )
+    else:
+        delta = (target.radiuses[2] - target.radiuses[1]) / (
+            n_surfaces_gradients_estimation + 2
+        )
+        radiuses_gradients_estimation = np.array(
+            [target.radiuses[1], target.radiuses[1] + delta, target.radiuses[2]]
+        )
+        hitting_prob_gradients, cluster_centers_gradients, cluster_labels_gradients = estimate_hitting_prob(
+            target,
+            radiuses_gradients_estimation,
+            0,
+            n_surfaces_gradients_estimation,
+            num_points,
+            num_clusters,
+            num_trials,
+            time_step,
+            use_parallel,
+            n_split,
+        )
+        cluster_centers_gradients = cluster_centers_gradients[
+            n_surfaces_gradients_estimation + 1
+        ]
+        _, ind = linear_sum_assignment(
+            cdist(cluster_centers, cluster_centers_gradients)
+        )
+        hitting_prob_gradients = hitting_prob_gradients[ind]
+        gradients = np.abs(hitting_prob_gradients - 1) / delta
+        capacity = (
+            dA ** (n_dim - 1)
+            * np.sum(n_points_in_clusters * hitting_prob * gradients)
+            / num_points
+        )
+
+    capacity *= target.get_constant()
     return capacity
 
 

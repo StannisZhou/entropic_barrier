@@ -3,6 +3,7 @@ from math import *
 import numba
 import numpy as np
 import sympy
+from scipy.special import gamma
 from sympy.utilities.lambdify import lambdastr
 
 import golf_course.estimate.numba as nestimate
@@ -134,6 +135,14 @@ class Target(object):
         self.advance_within_concentric_spheres_numba = (
             advance_within_concentric_spheres_numba
         )
+
+    def get_constant(self):
+        n_dim = self.center.size
+        constant = 2 * np.pi ** (n_dim / 2) / gamma(n_dim / 2)
+        if np.linalg.norm(self.center) + self.radiuses[1] > 1:
+            constant *= np.arccos(self.radiuses[1] / 2) / np.pi
+
+        return constant
 
 
 def generate_random_well_sympy_expr(
