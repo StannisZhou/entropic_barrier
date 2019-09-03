@@ -2,7 +2,7 @@ import numpy as np
 
 import golf_course.estimate.numba as nestimate
 from golf_course.core.target import Target
-from tqdm import tqdm
+from golf_course.estimate.capacity import estimate_capacity
 
 
 class ToyModel(object):
@@ -24,9 +24,6 @@ class ToyModel(object):
             particular target
         """
         self.time_step = time_step
-        for target_param in target_param_list:
-            target_param['time_step'] = time_step
-
         assert _check_compatibility(target_param_list, 1)
         self.target_list = [Target(**params) for params in target_param_list]
 
@@ -51,12 +48,14 @@ class ToyModel(object):
 
         return index
 
-    def estimate_hitting_prob(self):
+    def estimate_hitting_prob(self, capacity_estimation_param_list):
         n_targets = len(self.target_list)
         hitting_prob = np.zeros(n_targets)
         for ii in range(n_targets):
             target = self.target_list[ii]
-            hitting_prob[ii] = target.estimate_capacity()
+            hitting_prob[ii] = estimate_capacity(
+                target, **capacity_estimation_param_list[ii]
+            )
 
         hitting_prob = hitting_prob / np.sum(hitting_prob)
         return hitting_prob
@@ -66,7 +65,7 @@ def _check_compatibility(target_param_list, boundary_radius):
     n_spheres = len(target_param_list)
     for target_param in target_param_list:
         center = target_param['center']
-        radius = target_param['radiuses'][2]
+        radius = target_param['radiuses'][0]
         if np.linalg.norm(center) - radius > boundary_radius:
             return False
 

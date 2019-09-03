@@ -32,12 +32,6 @@ def generate_model_params(n_bumps=10, relative_scale=DEFAULT_RELATIVE_SCALE):
                 ),
                 "standard_deviations": 0.01 * np.ones(n_bumps),
             },
-            "inner": 2,
-            "outer": 2,
-            "num_points": 10000,
-            "num_clusters": 15,
-            "num_trials": 5000,
-            "time_step": time_step,
         },
         {
             "center": centers[1],
@@ -51,12 +45,6 @@ def generate_model_params(n_bumps=10, relative_scale=DEFAULT_RELATIVE_SCALE):
                 ),
                 "standard_deviations": 0.01 * np.ones(n_bumps),
             },
-            "inner": 2,
-            "outer": 2,
-            "num_points": 10000,
-            "num_clusters": 15,
-            "num_trials": 5000,
-            "time_step": time_step,
         },
     ]
     for target_param in target_param_list:
