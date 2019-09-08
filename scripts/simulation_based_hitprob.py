@@ -16,32 +16,34 @@ ex = sacred.Experiment('simulation_based_hitprob')
 ex.observers.append(FileStorageObserver.create(log_folder))
 
 
-def generate_model_params(n_bumps=10, relative_scale=DEFAULT_RELATIVE_SCALE):
+def generate_model_params(
+    centers, radiuses, n_bumps=10, relative_scale=DEFAULT_RELATIVE_SCALE
+):
+    centers = np.array(centers)
+    radiuses = np.array(radiuses)
     time_step = 1e-05
-    centers = np.array([[0.5, 0.6, 0, 0, 0], [-0.7, 0, 0, 0, 0]])
-    centers /= np.linalg.norm(centers, axis=1, keepdims=True)
     target_param_list = [
         {
             "center": centers[0],
-            "radiuses": np.array([0.02, 0.05, 0.1]),
+            "radiuses": radiuses[0],
             "energy_type": "random_well",
             "energy_params": {
                 "depth": 10.0,
                 "locations": sample_random_locations(
-                    np.array([0.5, 0.6, 0, 0, 0]), np.array([0.02, 0.05]), n_bumps
+                    centers[0], radiuses[0][:2], n_bumps
                 ),
                 "standard_deviations": 0.01 * np.ones(n_bumps),
             },
         },
         {
             "center": centers[1],
-            "radiuses": np.array([0.04, 0.075, 0.15]),
+            "radiuses": radiuses[1],
             "energy_type": "random_crater",
             "energy_params": {
                 "depth": 6.0,
                 "height": 1.0,
                 "locations": sample_random_locations(
-                    np.array([-0.7, 0, 0, 0, 0]), np.array([0.04, 0.075]), n_bumps
+                    centers[1], radiuses[1][:2], n_bumps
                 ),
                 "standard_deviations": 0.01 * np.ones(n_bumps),
             },
@@ -67,11 +69,13 @@ def generate_model_params(n_bumps=10, relative_scale=DEFAULT_RELATIVE_SCALE):
 
 @ex.config
 def config():
-    n_initial_locations = 2
+    n_initial_locations = 100
     n_simulations = 2000
+    centers = [[0.5, 0.6, 0, 0, 0], [-0.7, 0, 0, 0, 0]]
+    radiuses = [[0.2, 0.4, 0.5], [0.4, 0.45, 0.5]]
     model_params_fname = None
     if model_params_fname is None:
-        time_step, target_param_list = generate_model_params()
+        time_step, target_param_list = generate_model_params(centers, radiuses)
     else:
         time_step, target_param_list = load_model_params(model_params_fname)
 
@@ -105,4 +109,15 @@ def run(n_initial_locations, n_simulations, time_step, target_param_list):
     temp_folder.cleanup()
 
 
-ex.run()
+centers = np.array([[0.5, 0.6, 0, 0, 0], [-0.7, 0, 0, 0, 0]])
+centers /= np.linalg.norm(centers, axis=1, keepdims=True)
+centers = centers.tolist()
+# Run 1
+radiuses = [[0.45, 0.475, 0.5], [0.45, 0.475, 0.5]]
+ex.run(config_updates={'centers': centers, 'radiuses': radiuses})
+# Run 2
+radiuses = [[0.1, 0.15, 0.5], [0.2, 0.25, 0.5]]
+ex.run(config_updates={'centers': centers, 'radiuses': radiuses})
+# Run 3
+radiuses = [[0.02, 0.5, 0.5], [0.04, 0.075, 0.5]]
+ex.run(config_updates={'centers': centers, 'radiuses': radiuses})
