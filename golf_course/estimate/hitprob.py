@@ -92,7 +92,7 @@ def get_simple_hitprob(
         hitting_prob_list[ii] = hitting_prob
         time_taken[ii] = end_time - start_time
 
-    return expected_hitting_prob
+    return initial_location_list, hitting_prob_list, time_taken, expected_hitting_prob
 
 
 def get_nontrivial_hitprob(toy_model, n_initial_locations, n_simulations):

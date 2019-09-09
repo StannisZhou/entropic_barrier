@@ -20,8 +20,9 @@ def estimate_capacity(
     time_step=1e-5,
     use_parallel=True,
     n_split=4,
+    use_analytical_gradients=True,
+    estimate_gradients=False,
     n_surfaces_gradients_estimation=15,
-    analytical_gradients=False,
 ):
     """
     Parameters
@@ -49,6 +50,9 @@ def estimate_capacity(
         Whether we want to use the gradients estimated analytically
 
     """
+    if not use_analytical_gradients:
+        assert estimate_gradients
+
     hitting_prob, cluster_centers, cluster_labels = estimate_hitting_prob(
         target,
         target.radiuses,
@@ -69,15 +73,7 @@ def estimate_capacity(
     )
     n_dim = target.center.size
     dA = target.radiuses[1]
-    if analytical_gradients:
-        rAtilde = target.radiuses[2]
-        capacity = (
-            (n_dim - 2)
-            / (dA ** (2 - n_dim) - rAtilde ** (2 - n_dim))
-            * np.sum(n_points_in_clusters * hitting_prob)
-            / num_points
-        )
-    else:
+    if estimate_gradients:
         delta = (target.radiuses[2] - target.radiuses[1]) / (
             n_surfaces_gradients_estimation + 2
         )
@@ -104,6 +100,18 @@ def estimate_capacity(
         )
         hitting_prob_gradients = hitting_prob_gradients[ind]
         gradients = np.abs(hitting_prob_gradients - 1) / delta
+    else:
+        gradients = None
+
+    if use_analytical_gradients:
+        rAtilde = target.radiuses[2]
+        capacity = (
+            (n_dim - 2)
+            / (dA ** (2 - n_dim) - rAtilde ** (2 - n_dim))
+            * np.sum(n_points_in_clusters * hitting_prob)
+            / num_points
+        )
+    else:
         capacity = (
             dA ** (n_dim - 1)
             * np.sum(n_points_in_clusters * hitting_prob * gradients)
@@ -111,7 +119,7 @@ def estimate_capacity(
         )
 
     capacity *= target.get_constant()
-    return capacity
+    return capacity, gradients
 
 
 def estimate_hitting_prob(

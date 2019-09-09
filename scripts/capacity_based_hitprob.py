@@ -18,30 +18,32 @@ def config():
     simulation_log_folder = os.path.expanduser(
         '~/logs/diffusion/simulation_based_hitprob/3'
     )
-    time_step = 1e-7
+    time_step = 5e-7
     capacity_estimation_param_list = [
         {
             "inner": 1,
             "outer": 1,
             "num_points": 5000,
-            "num_clusters": 7,
-            "num_trials": 3000,
+            "num_clusters": 10,
+            "num_trials": 1000,
             "use_parallel": False,
             "n_split": 1,
-            "n_surfaces_gradients_estimation": 10,
-            "analytical_gradients": False,
+            "use_analytical_gradients": True,
+            "estimate_gradients": False,
+            "n_surfaces_gradients_estimation": None,
             "time_step": time_step,
         },
         {
             "inner": 1,
-            "outer": 2,
+            "outer": 1,
             "num_points": 5000,
-            "num_clusters": 7,
-            "num_trials": 3000,
+            "num_clusters": 10,
+            "num_trials": 1000,
             "use_parallel": False,
             "n_split": 1,
-            "n_surfaces_gradients_estimation": 10,
-            "analytical_gradients": False,
+            "use_analytical_gradients": True,
+            "estimate_gradients": False,
+            "n_surfaces_gradients_estimation": None,
             "time_step": time_step,
         },
     ]
