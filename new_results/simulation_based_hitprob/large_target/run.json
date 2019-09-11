@@ -1,0 +1,63 @@
+{
+  "artifacts": [
+    "model_params.pkl",
+    "results.pkl"
+  ],
+  "command": "run",
+  "experiment": {
+    "base_dir": "/home/stannis/entropic_barrier/scripts",
+    "dependencies": [
+      "diffusion==0.0.0",
+      "numpy==1.16.4",
+      "sacred==0.7.4"
+    ],
+    "mainfile": "simulation_based_hitprob.py",
+    "name": "simulation_based_hitprob",
+    "repositories": [],
+    "sources": [
+      [
+        "simulation_based_hitprob.py",
+        "_sources/simulation_based_hitprob_f799561d8c3563f08cf331b723625557.py"
+      ]
+    ]
+  },
+  "heartbeat": "2019-09-09T00:43:17.334204",
+  "host": {
+    "ENV": {},
+    "cpu": "Intel(R) Xeon(R) Platinum 8275CL CPU @ 3.00GHz",
+    "hostname": "base",
+    "os": [
+      "Linux",
+      "Linux-4.15.0-1041-aws-x86_64-with-debian-buster-sid"
+    ],
+    "python_version": "3.6.9"
+  },
+  "meta": {
+    "command": "run",
+    "options": {
+      "--beat_interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print_config": false,
+      "--priority": null,
+      "--queue": false,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2019-09-08T22:25:39.754069",
+  "status": "COMPLETED",
+  "stop_time": "2019-09-09T00:43:17.331267"
+}
