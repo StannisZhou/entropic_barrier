@@ -660,8 +660,12 @@ def _get_data_driven_binning_hitting_probability(
         un - np.dot(Q_product[:num_clusters, num_clusters:], u0),
     )
 
-    temp = np.dot(Q_middle, np.concatenate((u1, u0)))
-    probability = temp[:num_clusters]
+    if num_surfaces == 3:
+        probability = u1
+    else:
+        temp = np.dot(Q_middle, np.concatenate((u1, u0)))
+        probability = temp[:num_clusters]
+
     return probability
 
 

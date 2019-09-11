@@ -15,35 +15,41 @@ ex.observers.append(FileStorageObserver.create(log_folder))
 
 @ex.config
 def config():
+    case = 'med'
+    time_step = 1e-6
+    inner_list = [1, 1]
+    outer_list = [1, 1]
+    num_points_list = [5000, 5000]
+    num_clusters_list = [10, 10]
+    num_trials_list = [5000, 5000]
     simulation_log_folder = os.path.expanduser(
-        '~/logs/diffusion/simulation_based_hitprob/3'
+        '~/entropic_barrier/new_results/simulation_based_hitprob/{}_target'.format(case)
     )
-    time_step = 5e-7
     capacity_estimation_param_list = [
         {
-            "inner": 1,
-            "outer": 1,
-            "num_points": 5000,
-            "num_clusters": 10,
-            "num_trials": 1000,
+            "inner": inner_list[0],
+            "outer": outer_list[0],
+            "num_points": num_points_list[0],
+            "num_clusters": num_clusters_list[0],
+            "num_trials": num_trials_list[0],
             "use_parallel": False,
             "n_split": 1,
             "use_analytical_gradients": True,
             "estimate_gradients": False,
-            "n_surfaces_gradients_estimation": None,
+            "n_surfaces_gradients_estimation": 10,
             "time_step": time_step,
         },
         {
-            "inner": 1,
-            "outer": 1,
-            "num_points": 5000,
-            "num_clusters": 10,
-            "num_trials": 1000,
+            "inner": inner_list[1],
+            "outer": outer_list[1],
+            "num_points": num_points_list[1],
+            "num_clusters": num_clusters_list[1],
+            "num_trials": num_trials_list[1],
             "use_parallel": False,
             "n_split": 1,
             "use_analytical_gradients": True,
             "estimate_gradients": False,
-            "n_surfaces_gradients_estimation": None,
+            "n_surfaces_gradients_estimation": 10,
             "time_step": time_step,
         },
     ]
@@ -85,4 +91,22 @@ def run(simulation_log_folder, time_step, capacity_estimation_param_list):
     temp_folder.cleanup()
 
 
-ex.run()
+for case in ['med', 'small']:
+    for time_step in [1e-6, 1e-5]:
+        for outer in [5, 3, 7]:
+            for points_clusters_trials in [
+                (1000, 3, 1000),
+                (3000, 5, 1500),
+                (5000, 7, 2000),
+            ]:
+                num_points, num_clusters, num_trials = points_clusters_trials
+                ex.run(
+                    config_updates={
+                        'case': case,
+                        'time_step': time_step,
+                        'outer_list': [outer, outer],
+                        'num_points_list': [num_points, num_points],
+                        'num_clusters_list': [num_clusters, num_clusters],
+                        'num_trials_list': [num_trials, num_trials],
+                    }
+                )

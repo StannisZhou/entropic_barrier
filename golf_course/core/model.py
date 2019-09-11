@@ -53,7 +53,7 @@ class ToyModel(object):
         hitting_prob = np.zeros(n_targets)
         for ii in range(n_targets):
             target = self.target_list[ii]
-            hitting_prob[ii] = estimate_capacity(
+            hitting_prob[ii], _ = estimate_capacity(
                 target, **capacity_estimation_param_list[ii]
             )
 
