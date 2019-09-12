@@ -19,12 +19,6 @@ python setup.py develop
 
 # Reproduce the results
 
-Run
-```
-python run_experiments.py
-```
-to run all the experiments. After you finish running all the experiments (which would take a while), run
-```
-python reproduce_results.py
-```
-to reproduce the results in the paper. This would generate a `report.pdf` file, which contains all the figures and numbers reported in the paper.
+Run the three scripts under the `scripts` folder to reproduce the results in the paper.
+
+To save time, a copy of the results from existing experiments is attached in the `results` folder. Use the `visualize_results.ipynb` notebook to visualize the results. 
