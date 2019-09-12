@@ -112,12 +112,12 @@ def run(n_initial_locations, n_simulations, time_step, target_param_list):
 centers = np.array([[0.5, 0.6, 0, 0, 0], [-0.7, 0, 0, 0, 0]])
 centers /= np.linalg.norm(centers, axis=1, keepdims=True)
 centers = centers.tolist()
-# Run 1
+# Large target
 radiuses = [[0.45, 0.475, 0.5], [0.45, 0.475, 0.5]]
 ex.run(config_updates={'centers': centers, 'radiuses': radiuses})
-# Run 2
+# Med target
 radiuses = [[0.1, 0.15, 0.5], [0.2, 0.25, 0.5]]
 ex.run(config_updates={'centers': centers, 'radiuses': radiuses})
-# Run 3
+# Small target
 radiuses = [[0.02, 0.5, 0.5], [0.04, 0.075, 0.5]]
 ex.run(config_updates={'centers': centers, 'radiuses': radiuses})

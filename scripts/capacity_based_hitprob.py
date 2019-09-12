@@ -23,7 +23,7 @@ def config():
     num_clusters_list = [10, 10]
     num_trials_list = [5000, 5000]
     simulation_log_folder = os.path.expanduser(
-        '~/entropic_barrier/new_results/simulation_based_hitprob/{}_target'.format(case)
+        '~/entropic_barrier/results/simulation_based_hitprob/{}_target'.format(case)
     )
     capacity_estimation_param_list = [
         {
