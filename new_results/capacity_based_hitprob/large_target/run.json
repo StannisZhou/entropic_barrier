@@ -1,0 +1,64 @@
+{
+  "artifacts": [
+    "model_params.pkl",
+    "simulation_results.pkl",
+    "capacity_results.pkl"
+  ],
+  "command": "run",
+  "experiment": {
+    "base_dir": "/Users/zhouguangyao/entropic_barrier/scripts",
+    "dependencies": [
+      "diffusion==0.0.0",
+      "numpy==1.16.4",
+      "sacred==0.7.4"
+    ],
+    "mainfile": "capacity_based_hitprob.py",
+    "name": "capacity_based_hitprob",
+    "repositories": [],
+    "sources": [
+      [
+        "capacity_based_hitprob.py",
+        "_sources/capacity_based_hitprob_b4255ef2cd6947606ae8d3a6f3f9fd35.py"
+      ]
+    ]
+  },
+  "heartbeat": "2019-09-12T03:44:41.851932",
+  "host": {
+    "ENV": {},
+    "cpu": "Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz",
+    "hostname": "ZhouGuangyaos-MacBook-Pro.local",
+    "os": [
+      "Darwin",
+      "Darwin-16.7.0-x86_64-i386-64bit"
+    ],
+    "python_version": "3.6.9"
+  },
+  "meta": {
+    "command": "run",
+    "options": {
+      "--beat_interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print_config": false,
+      "--priority": null,
+      "--queue": false,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2019-09-12T03:43:26.802581",
+  "status": "COMPLETED",
+  "stop_time": "2019-09-12T03:44:41.850494"
+}

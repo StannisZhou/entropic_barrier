@@ -1,0 +1,64 @@
+{
+  "artifacts": [
+    "model_params.pkl",
+    "simulation_results.pkl",
+    "capacity_results.pkl"
+  ],
+  "command": "run",
+  "experiment": {
+    "base_dir": "/home/stannis/entropic_barrier/scripts",
+    "dependencies": [
+      "diffusion==0.0.0",
+      "numpy==1.16.4",
+      "sacred==0.7.4"
+    ],
+    "mainfile": "capacity_based_hitprob.py",
+    "name": "capacity_based_hitprob",
+    "repositories": [],
+    "sources": [
+      [
+        "capacity_based_hitprob.py",
+        "_sources/capacity_based_hitprob_900a27fbe99d0ec1dc413887ee8c0f5c.py"
+      ]
+    ]
+  },
+  "heartbeat": "2019-09-11T23:01:09.980227",
+  "host": {
+    "ENV": {},
+    "cpu": "Intel(R) Xeon(R) Platinum 8124M CPU @ 3.00GHz",
+    "hostname": "base",
+    "os": [
+      "Linux",
+      "Linux-4.15.0-1041-aws-x86_64-with-debian-buster-sid"
+    ],
+    "python_version": "3.6.9"
+  },
+  "meta": {
+    "command": "run",
+    "options": {
+      "--beat_interval": null,
+      "--capture": null,
+      "--comment": null,
+      "--debug": false,
+      "--enforce_clean": false,
+      "--file_storage": null,
+      "--force": false,
+      "--help": false,
+      "--loglevel": null,
+      "--mongo_db": null,
+      "--name": null,
+      "--pdb": false,
+      "--print_config": false,
+      "--priority": null,
+      "--queue": false,
+      "--sql": null,
+      "--tiny_db": null,
+      "--unobserved": false
+    }
+  },
+  "resources": [],
+  "result": null,
+  "start_time": "2019-09-11T22:57:46.785682",
+  "status": "COMPLETED",
+  "stop_time": "2019-09-11T23:01:09.979081"
+}

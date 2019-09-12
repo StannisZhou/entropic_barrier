@@ -1,0 +1,54 @@
+{
+  "capacity_estimation_param_list": [
+    {
+      "estimate_gradients": false,
+      "inner": 1,
+      "n_split": 1,
+      "n_surfaces_gradients_estimation": 10,
+      "num_clusters": 3,
+      "num_points": 1000,
+      "num_trials": 1000,
+      "outer": 7,
+      "time_step": 1e-05,
+      "use_analytical_gradients": true,
+      "use_parallel": false
+    },
+    {
+      "estimate_gradients": false,
+      "inner": 1,
+      "n_split": 1,
+      "n_surfaces_gradients_estimation": 10,
+      "num_clusters": 3,
+      "num_points": 1000,
+      "num_trials": 1000,
+      "outer": 7,
+      "time_step": 1e-05,
+      "use_analytical_gradients": true,
+      "use_parallel": false
+    }
+  ],
+  "case": "med",
+  "inner_list": [
+    1,
+    1
+  ],
+  "num_clusters_list": [
+    3,
+    3
+  ],
+  "num_points_list": [
+    1000,
+    1000
+  ],
+  "num_trials_list": [
+    1000,
+    1000
+  ],
+  "outer_list": [
+    7,
+    7
+  ],
+  "seed": 837644795,
+  "simulation_log_folder": "/home/stannis/entropic_barrier/new_results/simulation_based_hitprob/med_target",
+  "time_step": 1e-05
+}

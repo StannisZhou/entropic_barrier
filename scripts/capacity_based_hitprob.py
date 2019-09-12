@@ -91,22 +91,33 @@ def run(simulation_log_folder, time_step, capacity_estimation_param_list):
     temp_folder.cleanup()
 
 
-for case in ['med', 'small']:
-    for time_step in [1e-6, 1e-5]:
-        for outer in [5, 3, 7]:
-            for points_clusters_trials in [
-                (1000, 3, 1000),
-                (3000, 5, 1500),
-                (5000, 7, 2000),
-            ]:
-                num_points, num_clusters, num_trials = points_clusters_trials
-                ex.run(
-                    config_updates={
-                        'case': case,
-                        'time_step': time_step,
-                        'outer_list': [outer, outer],
-                        'num_points_list': [num_points, num_points],
-                        'num_clusters_list': [num_clusters, num_clusters],
-                        'num_trials_list': [num_trials, num_trials],
-                    }
-                )
+ex.run(
+    config_updates={
+        'case': 'large',
+        'time_step': 1e-7,
+        'outer_list': [5, 5],
+        'num_points_list': [1000, 1000],
+        'num_clusters_list': [3, 3],
+        'num_trials_list': [1000, 1000],
+    }
+)
+ex.run(
+    config_updates={
+        'case': 'med',
+        'time_step': 1e-5,
+        'outer_list': [7, 7],
+        'num_points_list': [1000, 1000],
+        'num_clusters_list': [3, 3],
+        'num_trials_list': [1000, 1000],
+    }
+)
+ex.run(
+    config_updates={
+        'case': 'small',
+        'time_step': 1e-6,
+        'outer_list': [7, 7],
+        'num_points_list': [1000, 1000],
+        'num_clusters_list': [3, 3],
+        'num_trials_list': [1000, 1000],
+    }
+)
