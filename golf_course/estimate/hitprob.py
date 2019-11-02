@@ -51,8 +51,8 @@ def get_simple_hitprob_parallelize(
             indices = np.array(indices)
             n_targets = centers.shape[0]
             hitting_prob = np.zeros(n_targets)
-            for ii in range(n_targets):
-                hitting_prob[ii] = np.sum(indices == ii) / n_simulations
+            for tt in range(n_targets):
+                hitting_prob[tt] = np.sum(indices == tt) / n_simulations
 
             end_time = timeit.default_timer()
             print(
