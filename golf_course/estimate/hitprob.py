@@ -9,29 +9,61 @@ from golf_course.utils import sample_uniform_initial_location
 from tqdm import tqdm
 
 
-def get_simple_hitprob_one_location(
-    centers, target_radiuses, time_step, initial_location, n_simulations
+def get_simple_hitprob_parallelize(
+    centers, target_radiuses, time_step, initial_location_list, n_simulations
 ):
-    indices = []
+    n_initial_locations = len(initial_location_list)
+    n_targets = centers.shape[0]
     worker = functools.partial(
         nestimate.advance_flat_regions,
         centers=centers,
         radiuses=target_radiuses,
         time_step=time_step,
     )
-    with mp.Pool(processes=mp.cpu_count()) as p:
-        for previous_location, current_location, index in tqdm(
-            p.imap_unordered(worker, np.tile(initial_location, (n_simulations, 1)))
-        ):
-            indices.append(index)
+    hitting_prob_list = np.zeros((n_initial_locations, n_targets))
+    if n_simulations == 1:
+        # Parallelize over initial locations
+        start_time = timeit.default_timer()
+        with mp.Pool(processes=mp.cpu_count()) as p:
+            for ii, (previous_location, current_location, index) in tqdm(
+                enumerate(p.imap(worker, initial_location_list))
+            ):
+                hitting_prob_list[ii][index] = 1
 
-    indices = np.array(indices)
-    n_targets = centers.shape[0]
-    hitting_prob = np.zeros(n_targets)
-    for ii in range(n_targets):
-        hitting_prob[ii] = np.sum(indices == ii) / n_simulations
+        end_time = timeit.default_timer()
+        time_taken = end_time - start_time
+    else:
+        # Parallelize over simulations
+        time_taken = np.zeros(n_initial_locations)
+        for ii in range(n_initial_locations):
+            initial_location = initial_location_list[ii]
+            print('Working on initial location: {}'.format(initial_location))
+            start_time = timeit.default_timer()
+            indices = []
+            with mp.Pool(processes=mp.cpu_count()) as p:
+                for previous_location, current_location, index in tqdm(
+                    p.imap_unordered(
+                        worker, np.tile(initial_location, (n_simulations, 1))
+                    )
+                ):
+                    indices.append(index)
 
-    return hitting_prob
+            indices = np.array(indices)
+            n_targets = centers.shape[0]
+            hitting_prob = np.zeros(n_targets)
+            for ii in range(n_targets):
+                hitting_prob[ii] = np.sum(indices == ii) / n_simulations
+
+            end_time = timeit.default_timer()
+            print(
+                'Run {} finished. Hitting probability {}, time taken {}'.format(
+                    ii, hitting_prob, end_time - start_time
+                )
+            )
+            hitting_prob_list[ii] = hitting_prob
+            time_taken[ii] = end_time - start_time
+
+    return hitting_prob_list, time_taken
 
 
 def get_simple_hitprob(
@@ -71,27 +103,9 @@ def get_simple_hitprob(
     expected_hitting_prob = (
         1 / (target_radiuses ** (2 - n_dim) - outer_radiuses ** (2 - n_dim))
     ) / np.sum(1 / (target_radiuses ** (2 - n_dim) - outer_radiuses ** (2 - n_dim)))
-    hitting_prob_list = np.zeros((n_initial_locations, n_targets))
-    time_taken = np.zeros(n_initial_locations)
-    for ii in range(n_initial_locations):
-        print('Working on initial location: {}'.format(initial_location_list[ii]))
-        start_time = timeit.default_timer()
-        hitting_prob = get_simple_hitprob_one_location(
-            centers,
-            target_radiuses,
-            time_step,
-            initial_location_list[ii],
-            n_simulations,
-        )
-        end_time = timeit.default_timer()
-        print(
-            'Run {} finished. Hitting probability {}, time taken {}'.format(
-                ii, hitting_prob, end_time - start_time
-            )
-        )
-        hitting_prob_list[ii] = hitting_prob
-        time_taken[ii] = end_time - start_time
-
+    hitting_prob_list, time_taken = get_simple_hitprob_parallelize(
+        centers, target_radiuses, time_step, initial_location_list, n_simulations
+    )
     return initial_location_list, hitting_prob_list, time_taken, expected_hitting_prob
 
 
@@ -112,15 +126,23 @@ def get_nontrivial_hitprob(toy_model, n_initial_locations, n_simulations):
 
     n_targets = len(toy_model.target_list)
     hitting_prob_list = np.zeros((n_initial_locations, n_targets))
-    time_taken = np.zeros(n_initial_locations)
-    for run_idx in range(n_initial_locations):
-        initial_location = initial_location_list[run_idx]
-        print('Working on initial location: {}'.format(initial_location))
+    if n_simulations == 1:
+        # Parallelize over initial locations
         start_time = timeit.default_timer()
-        if n_simulations == 1:
-            index = toy_model.do_naive_simulation(initial_location)
-            indices = np.array([index])
-        else:
+        with mp.Pool(processes=mp.cpu_count()) as p:
+            for ii, index in tqdm(
+                enumerate(p.imap(toy_model.do_narive_simulation, initial_location_list))
+            ):
+                hitting_prob_list[ii][index] = 1
+
+        end_time = timeit.default_timer()
+        time_taken = end_time - start_time
+    else:
+        # Parallelize over simulations
+        time_taken = np.zeros(n_initial_locations)
+        for run_idx in range(n_initial_locations):
+            initial_location = initial_location_list[run_idx]
+            print('Working on initial location: {}'.format(initial_location))
             indices = []
             with mp.Pool(processes=mp.cpu_count()) as p:
                 for index in tqdm(
@@ -132,18 +154,17 @@ def get_nontrivial_hitprob(toy_model, n_initial_locations, n_simulations):
                     indices.append(index)
 
             indices = np.array(indices)
+            hitting_prob = np.zeros(n_targets)
+            for target_idx in range(n_targets):
+                hitting_prob[target_idx] = np.sum(indices == target_idx) / n_simulations
 
-        hitting_prob = np.zeros(n_targets)
-        for target_idx in range(n_targets):
-            hitting_prob[target_idx] = np.sum(indices == target_idx) / n_simulations
-
-        end_time = timeit.default_timer()
-        print(
-            'Run {} finished. Hitting probability {}, time taken {}'.format(
-                run_idx, hitting_prob, end_time - start_time
+            end_time = timeit.default_timer()
+            print(
+                'Run {} finished. Hitting probability {}, time taken {}'.format(
+                    run_idx, hitting_prob, end_time - start_time
+                )
             )
-        )
-        hitting_prob_list[run_idx] = hitting_prob
-        time_taken[run_idx] = end_time - start_time
+            hitting_prob_list[run_idx] = hitting_prob
+            time_taken[run_idx] = end_time - start_time
 
     return initial_location_list, hitting_prob_list, time_taken
