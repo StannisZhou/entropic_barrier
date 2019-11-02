@@ -18,7 +18,9 @@ ex.observers.append(FileStorageObserver.create(log_folder))
 
 @ex.config
 def config():
-    skip_direction_simulations = False
+    do_direct_simulations = True
+    do_capacity_estimation = True
+    do_gradients_estimation = False
     n_initial_locations = 100
     n_simulations = 2000
     time_step = 1e-5
@@ -34,14 +36,16 @@ def config():
         'use_parallel': False,
         'n_split': 1,
         'use_analytical_gradients': True,
-        'estimate_gradients': False,
+        'estimate_gradients': do_gradients_estimation,
         "n_surfaces_gradients_estimation": None,
     }
 
 
 @ex.main
 def run(
-    skip_direction_simulations,
+    do_direct_simulations,
+    do_capacity_estimation,
+    do_gradients_estimation,
     n_initial_locations,
     n_simulations,
     time_step,
@@ -49,10 +53,13 @@ def run(
     radiuses,
     capacity_estimation_param,
 ):
+    if do_gradients_estimation:
+        assert do_capacity_estimation
+
     temp_folder = tempfile.TemporaryDirectory()
     folder_name = temp_folder.name
     results = {}
-    if not skip_direction_simulations:
+    if do_direct_simulations:
         target_radiuses = np.array([radius[0] for radius in radiuses])
         outer_radiuses = np.array([radius[2] for radius in radiuses])
         initial_location_list, hitting_prob_list, time_taken, expected_hitting_prob = get_simple_hitprob(
@@ -72,37 +79,56 @@ def run(
             }
         )
 
-    target_list = [
-        Target(center, radius, 'flat', {}) for center, radius in zip(centers, radiuses)
-    ]
-    expected_capacity = np.zeros(len(target_list))
-    estimated_capacity = np.zeros(len(target_list))
-    expected_gradients = np.zeros(len(target_list))
-    estimated_gradients = []
-    for tt, target in enumerate(target_list):
-        n_dim = target.center.size
-        estimated_capacity[tt], gradients = estimate_capacity(
-            target, **capacity_estimation_param
-        )
-        estimated_gradients.append(gradients)
-        expected_capacity[tt] = (
-            target.get_constant()
-            * (n_dim - 2)
-            / (target.radiuses[0] ** (2 - n_dim) - target.radiuses[2] ** (2 - n_dim))
-        )
-        expected_gradients[tt] = (n_dim - 2) / (
-            target.radiuses[1] ** (n_dim - 1)
-            * (target.radiuses[1] ** (2 - n_dim) - target.radiuses[2] ** (2 - n_dim))
-        )
+    if do_capacity_estimation:
+        target_list = [
+            Target(center, radius, 'flat', {})
+            for center, radius in zip(centers, radiuses)
+        ]
+        expected_capacity = np.zeros(len(target_list))
+        estimated_capacity = np.zeros(len(target_list))
+        if do_gradients_estimation:
+            expected_gradients = np.zeros(len(target_list))
+            estimated_gradients = np.zeros(
+                (len(target_list), capacity_estimation_param['num_clusters'])
+            )
 
-    results.update(
-        {
-            'expected_capacity': expected_capacity,
-            'expected_gradients': expected_gradients,
-            'estimate_capacity': estimated_capacity,
-            'estimated_gradients': estimated_gradients,
-        }
-    )
+        for tt, target in enumerate(target_list):
+            n_dim = target.center.size
+            estimated_capacity[tt], gradients = estimate_capacity(
+                target, **capacity_estimation_param
+            )
+            expected_capacity[tt] = (
+                target.get_constant()
+                * (n_dim - 2)
+                / (
+                    target.radiuses[0] ** (2 - n_dim)
+                    - target.radiuses[2] ** (2 - n_dim)
+                )
+            )
+            if do_gradients_estimation:
+                estimated_gradients[tt] = gradients
+                expected_gradients[tt] = (n_dim - 2) / (
+                    target.radiuses[1] ** (n_dim - 1)
+                    * (
+                        target.radiuses[1] ** (2 - n_dim)
+                        - target.radiuses[2] ** (2 - n_dim)
+                    )
+                )
+
+        results.update(
+            {
+                'expected_capacity': expected_capacity,
+                'estimate_capacity': estimated_capacity,
+            }
+        )
+        if do_gradients_estimation:
+            results.update(
+                {
+                    'expected_gradients': expected_gradients,
+                    'estimated_gradients': estimated_gradients,
+                }
+            )
+
     pprint(results)
     results_fname = os.path.join(folder_name, 'results.pkl')
     with open(results_fname, 'wb') as f:
