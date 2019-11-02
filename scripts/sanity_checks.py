@@ -149,3 +149,36 @@ ex.run(config_updates={'radiuses': radiuses})
 # Small target
 radiuses = [[0.02, 0.05, 0.2], [0.04, 0.075, 0.2]]
 ex.run(config_updates={'radiuses': radiuses})
+# Accurate estimate of mean hitting probabilities
+n_initial_locations = 200000
+n_simulations = 1
+# Large target
+radiuses = [[0.15, 0.175, 0.2], [0.15, 0.175, 0.2]]
+ex.run(
+    config_updates={
+        'n_initial_locations': n_initial_locations,
+        'n_simulations': n_simulations,
+        'radiuses': radiuses,
+        'do_capacity_estimation': False,
+    }
+)
+# Med target
+radiuses = [[0.05, 0.1, 0.2], [0.075, 0.125, 0.2]]
+ex.run(
+    config_updates={
+        'n_initial_locations': n_initial_locations,
+        'n_simulations': n_simulations,
+        'radiuses': radiuses,
+        'do_capacity_estimation': False,
+    }
+)
+# Small target
+radiuses = [[0.02, 0.05, 0.2], [0.04, 0.075, 0.2]]
+ex.run(
+    config_updates={
+        'n_initial_locations': n_initial_locations,
+        'n_simulations': n_simulations,
+        'radiuses': radiuses,
+        'do_capacity_estimation': False,
+    }
+)

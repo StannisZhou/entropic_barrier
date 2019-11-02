@@ -121,3 +121,39 @@ ex.run(config_updates={'centers': centers, 'radiuses': radiuses})
 # Small target
 radiuses = [[0.02, 0.05, 0.5], [0.04, 0.075, 0.5]]
 ex.run(config_updates={'centers': centers, 'radiuses': radiuses})
+# Accurate estimate of mean hitting probabilities
+n_initial_locations = 200000
+n_simulations = 1
+# Large target
+model_params_fname = os.path.expanduser(
+    '~/entropic_barrier/results/simulation_based_hitprob/large_target/model_params.pkl'
+)
+ex.run(
+    config_updates={
+        'n_initial_locations': n_initial_locations,
+        'n_simulations': n_simulations,
+        'model_params_fname': model_params_fname,
+    }
+)
+# Med target
+model_params_fname = os.path.expanduser(
+    '~/entropic_barrier/results/simulation_based_hitprob/med_target/model_params.pkl'
+)
+ex.run(
+    config_updates={
+        'n_initial_locations': n_initial_locations,
+        'n_simulations': n_simulations,
+        'model_params_fname': model_params_fname,
+    }
+)
+# Small target
+model_params_fname = os.path.expanduser(
+    '~/entropic_barrier/results/simulation_based_hitprob/small_target/model_params.pkl'
+)
+ex.run(
+    config_updates={
+        'n_initial_locations': n_initial_locations,
+        'n_simulations': n_simulations,
+        'model_params_fname': model_params_fname,
+    }
+)
