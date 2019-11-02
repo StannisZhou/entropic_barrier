@@ -24,8 +24,8 @@ def config():
     n_initial_locations = 100
     n_simulations = 2000
     time_step = 1e-5
-    centers = np.array([[0.5, 0.6, 0, 0, 0], [-0.7, 0, 0, 0, 0]])
-    radiuses = np.array([[0.02, 0.05, 0.1], [0.04, 0.075, 0.15]])
+    centers = [[0.5, 0.6, 0, 0, 0], [-0.7, 0, 0, 0, 0]]
+    radiuses = [[0.02, 0.05, 0.1], [0.04, 0.075, 0.15]]
     capacity_estimation_param = {
         'num_points': int(5e2),
         'time_step': 1e-06,
@@ -53,6 +53,8 @@ def run(
     radiuses,
     capacity_estimation_param,
 ):
+    centers = np.array(centers)
+    radiuses = np.array(radiuses)
     if do_gradients_estimation:
         assert do_capacity_estimation
 
