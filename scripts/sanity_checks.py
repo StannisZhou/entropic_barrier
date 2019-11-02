@@ -18,7 +18,7 @@ ex.observers.append(FileStorageObserver.create(log_folder))
 
 @ex.config
 def config():
-    skip_direction_simulations = True
+    skip_direction_simulations = False
     n_initial_locations = 100
     n_simulations = 2000
     time_step = 1e-5
@@ -34,8 +34,8 @@ def config():
         'use_parallel': False,
         'n_split': 1,
         'use_analytical_gradients': True,
-        'estimate_gradients': True,
-        "n_surfaces_gradients_estimation": 12,
+        'estimate_gradients': False,
+        "n_surfaces_gradients_estimation": None,
     }
 
 
@@ -78,14 +78,13 @@ def run(
     expected_capacity = np.zeros(len(target_list))
     estimated_capacity = np.zeros(len(target_list))
     expected_gradients = np.zeros(len(target_list))
-    estimated_gradients = np.zeros(
-        (len(target_list), capacity_estimation_param['num_clusters'])
-    )
+    estimated_gradients = []
     for tt, target in enumerate(target_list):
         n_dim = target.center.size
-        estimated_capacity[tt], estimated_gradients[tt] = estimate_capacity(
+        estimated_capacity[tt], gradients = estimate_capacity(
             target, **capacity_estimation_param
         )
+        estimated_gradients.append(gradients)
         expected_capacity[tt] = (
             target.get_constant()
             * (n_dim - 2)
@@ -113,4 +112,12 @@ def run(
     temp_folder.cleanup()
 
 
-ex.run()
+# Large target
+radiuses = [[0.15, 0.175, 0.2], [0.15, 0.175, 0.2]]
+ex.run(config_updates={'radiuses': radiuses})
+# Med target
+radiuses = [[0.05, 0.1, 0.2], [0.075, 0.125, 0.2]]
+ex.run(config_updates={'radiuses': radiuses})
+# Small target
+radiuses = [[0.02, 0.05, 0.2], [0.04, 0.075, 0.2]]
+ex.run(config_updates={'radiuses': radiuses})

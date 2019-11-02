@@ -119,5 +119,5 @@ ex.run(config_updates={'centers': centers, 'radiuses': radiuses})
 radiuses = [[0.1, 0.15, 0.5], [0.2, 0.25, 0.5]]
 ex.run(config_updates={'centers': centers, 'radiuses': radiuses})
 # Small target
-radiuses = [[0.02, 0.5, 0.5], [0.04, 0.075, 0.5]]
+radiuses = [[0.02, 0.05, 0.5], [0.04, 0.075, 0.5]]
 ex.run(config_updates={'centers': centers, 'radiuses': radiuses})
