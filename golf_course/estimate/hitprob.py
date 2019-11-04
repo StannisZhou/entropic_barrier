@@ -131,7 +131,7 @@ def get_nontrivial_hitprob(toy_model, n_initial_locations, n_simulations):
         start_time = timeit.default_timer()
         with mp.Pool(processes=mp.cpu_count()) as p:
             for ii, index in tqdm(
-                enumerate(p.imap(toy_model.do_narive_simulation, initial_location_list))
+                enumerate(p.imap(toy_model.do_naive_simulation, initial_location_list))
             ):
                 hitting_prob_list[ii][index] = 1
 
