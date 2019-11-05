@@ -150,7 +150,7 @@ ex.run(config_updates={'radiuses': radiuses})
 radiuses = [[0.02, 0.05, 0.2], [0.04, 0.075, 0.2]]
 ex.run(config_updates={'radiuses': radiuses})
 # Accurate estimate of mean hitting probabilities
-n_initial_locations = 50000
+n_initial_locations = 20000
 n_simulations = 1
 # Large target
 radiuses = [[0.15, 0.175, 0.2], [0.15, 0.175, 0.2]]
