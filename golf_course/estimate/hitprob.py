@@ -3,11 +3,11 @@ import multiprocessing as mp
 import timeit
 
 import numpy as np
-from tqdm import tqdm
 
 import golf_course.estimate.numba as nestimate
 import joblib
 from golf_course.utils import sample_uniform_initial_location
+from tqdm import tqdm
 
 
 def get_simple_hitprob_parallelize(
@@ -25,7 +25,7 @@ def get_simple_hitprob_parallelize(
     if n_simulations == 1:
         # Parallelize over initial locations
         start_time = timeit.default_timer()
-        output = joblib.Parallel(n_jobs=joblib.cpu_count())(
+        output = joblib.Parallel(n_jobs=joblib.cpu_count(), prefer='threads')(
             joblib.delayed(worker)(location) for location in tqdm(initial_location_list)
         )
         for ii, (previous_location, current_location, index) in enumerate(output):
@@ -130,7 +130,7 @@ def get_nontrivial_hitprob(toy_model, n_initial_locations, n_simulations):
     if n_simulations == 1:
         # Parallelize over initial locations
         start_time = timeit.default_timer()
-        output = joblib.Parallel(n_jobs=joblib.cpu_count())(
+        output = joblib.Parallel(n_jobs=joblib.cpu_count(), prefer='threads')(
             joblib.delayed(toy_model.do_naive_simulation)(location)
             for location in tqdm(initial_location_list)
         )
