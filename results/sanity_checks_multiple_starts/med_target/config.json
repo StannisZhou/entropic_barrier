@@ -1,0 +1,50 @@
+{
+  "capacity_estimation_param": {
+    "estimate_gradients": false,
+    "inner": 1,
+    "n_split": 1,
+    "n_surfaces_gradients_estimation": null,
+    "num_clusters": 5,
+    "num_points": 500,
+    "num_trials": 5000,
+    "outer": 1,
+    "time_step": 1e-05,
+    "use_analytical_gradients": true,
+    "use_parallel": false
+  },
+  "centers": [
+    [
+      0.5,
+      0.6,
+      0,
+      0,
+      0
+    ],
+    [
+      -0.7,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "do_capacity_estimation": false,
+  "do_direct_simulations": true,
+  "do_gradients_estimation": false,
+  "n_initial_locations": 200000,
+  "n_simulations": 1,
+  "radiuses": [
+    [
+      0.05,
+      0.1,
+      0.2
+    ],
+    [
+      0.075,
+      0.125,
+      0.2
+    ]
+  ],
+  "seed": 932278576,
+  "time_step": 1e-05
+}
