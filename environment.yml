@@ -16,5 +16,4 @@ dependencies:
 - ipython
 - jupyter
 - pip:
-  - sacred=0.7.4
-
+  - sacred==0.7.4
