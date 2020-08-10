@@ -1,6 +1,6 @@
 # Introduction
 
-This repository contains the code to reproduce the experimental results in the paper "Capacities and the Free Passage of Entropic Barriers".
+This repository contains the code to reproduce the experimental results in the paper ["Capacities and efficient computation of first-passage probabilities"](https://journals.aps.org/pre/abstract/10.1103/PhysRevE.102.023304).
 
 # Setting up the environment
 
